@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package pim.service.v1;
+
+option go_package = ".;pim_service";
+
+import "google/api/annotations.proto";
+
+service PimService {
+    rpc Echo(String) returns (String){
+        option (google.api.http) = {
+            get: "/echo"
+        };
+    }
+}
+
+message String {
+    string value = 1;
+}
