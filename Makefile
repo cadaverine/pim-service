@@ -9,7 +9,4 @@ generate:
 		./api/pim-service.proto
 
 run:
-	GRPC_GO_LOG_VERBOSITY_LEVEL=99 \
-	GRPC_GO_LOG_SEVERITY_LEVEL=info \
-	go run cmd/pim-service/main.go \
-		-stderrthreshold=INFO
+	go run cmd/pim-service/main.go

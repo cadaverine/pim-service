@@ -5,14 +5,15 @@ create schema if not exists catalogs;
 create table if not exists catalogs.languages(
 	id bigserial primary key,
 	code varchar not null default '',
-	title varchar not null default ''
+	name varchar not null default ''
 );
 
 create table if not exists catalogs.brands(
 	id bigserial primary key,
-	title varchar not null default '',
+	name varchar not null default '',
 	logo varchar not null default '',
-	site varchar not null default ''
+	site varchar not null default '',
+	company varchar not null default '',
 );
 
 
@@ -23,7 +24,7 @@ create schema if not exists products;
 -- категории товаров
 create table if not exists products.categories_items(
 	id bigserial primary key,
-	title varchar not null default ''
+	name varchar not null default ''
 );
 
 -- категории имеют древовидную структуру
@@ -72,6 +73,7 @@ create table if not exists products.attributes_names(
 -- (может ли товар иметь более одной категории?)
 create table if not exists products.items(
 	id bigserial primary key,
+	name varchar not null default '',
 	brand_id bigint references catalogs.brands(id),
 	created_at timestamp default current_timestamp,
 	updated_at timestamp default current_timestamp,
@@ -88,5 +90,8 @@ create table if not exists products.items_categories(
 create table if not exists products.items_attributes(
 	item_id bigint references products.items(id),
 	attribute_id bigint references products.attributes_items(id),
-	value jsonb
+	value jsonb,
+	created_at timestamp default current_timestamp,
+	updated_at timestamp default current_timestamp,
+	created_by varchar not null default ''
 );

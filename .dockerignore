@@ -1,7 +1,9 @@
 .editorconfig
 .git
 .vscode
+
 scripts/
+database-data/
 
 AUTHORS.md
 CONTRIBUTING.md

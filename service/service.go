@@ -1,10 +1,13 @@
 package service
 
+import "github.com/jackc/pgx/v4/pgxpool"
+
 // PimService ...
 type PimService struct {
+	db *pgxpool.Pool
 }
 
 // NewPimService ...
-func NewPimService() *PimService {
-	return &PimService{}
+func NewPimService(db *pgxpool.Pool) *PimService {
+	return &PimService{db}
 }
