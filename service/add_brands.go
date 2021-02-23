@@ -4,21 +4,23 @@ import (
 	"context"
 
 	"github.com/jackc/pgx/v4"
-	gen "gitlab.com/cadaverine/pim-service/gen"
+	gen "gitlab.com/cadaverine/pim-service/gen/go/api/pim-service"
 )
 
 // AddBrands ...
 func (s *PimService) AddBrands(ctx context.Context, req *gen.Brands) (*gen.Empty, error) {
-	tx, err := s.db.Begin(ctx)
+	err := s.db.InTx(ctx, nil, func(tx pgx.Tx) error {
+		for _, brand := range req.GetBrands() {
+			err := addBrand(ctx, tx, brand)
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
 	if err != nil {
 		return nil, err
-	}
-
-	for _, brand := range req.GetBrands() {
-		err = addBrand(ctx, tx, brand)
-		if err != nil {
-			return nil, err
-		}
 	}
 
 	return &gen.Empty{}, nil

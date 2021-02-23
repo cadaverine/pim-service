@@ -1,12 +1,14 @@
-generate:
-	protoc -I/usr/local/include --proto_path=./api/ \
-		--proto_path=${GOPATH} \
-		--proto_path=${GOPATH}/pkg/mod/github.com/grpc-ecosystem/grpc-gateway/v2@v2.2.0/third_party/googleapis \
-		--proto_path=${GOPATH}/pkg/mod/github.com/grpc-ecosystem/grpc-gateway/v2@v2.2.0 \
-		--grpc-gateway_out=logtostderr=true:./gen \
+swag:
+	protoc -I/usr/local/include --proto_path=./api/pim-service \
+		--proto_path=. \
 		--swagger_out=allow_merge=true,merge_file_name=api:. \
-		--go_out=plugins=grpc:./gen/ \
-		./api/pim-service.proto
+		./api/pim-service/pim-service.proto
+
+generate: swag
+	buf generate
 
 run:
 	go run cmd/pim-service/main.go
+
+kube:
+	./scripts/kube.sh

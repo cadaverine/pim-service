@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	gen "gitlab.com/cadaverine/pim-service/gen"
+	gen "gitlab.com/cadaverine/pim-service/gen/go/api/pim-service"
 )
 
 // SearchBrands ...

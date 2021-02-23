@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.22.0 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: swagger-ui
+  name: swagger-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: swagger-ui
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.22.0 (HEAD)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: swagger-ui
+    spec:
+      containers:
+        - env:
+            - name: API_URL
+              value: pim-service:8080
+            - name: SWAGGER_JSON
+              value: /openapi.json
+          image: swaggerapi/swagger-ui
+          name: swagger-ui
+          ports:
+            - containerPort: 8080
+          resources: {}
+          volumeMounts:
+            - mountPath: /openapi.json
+              name: swagger-ui-claim0
+      restartPolicy: Always
+      volumes:
+        - name: swagger-ui-claim0
+          persistentVolumeClaim:
+            claimName: swagger-ui-claim0
+status: {}

@@ -4,6 +4,7 @@
 
 scripts/
 database-data/
+test-data/
 
 AUTHORS.md
 CONTRIBUTING.md

@@ -13,25 +13,32 @@ create table if not exists catalogs.brands(
 	name varchar not null default '',
 	logo varchar not null default '',
 	site varchar not null default '',
-	company varchar not null default '',
+	company varchar not null default ''
 );
-
-
 
 -- все, что относится к продуктам
 create schema if not exists products;
 
+create table if not exists products.sellers(
+	id bigserial primary key,
+	name varchar not null default '',
+	company varchar not null default '',
+	url varchar not null default '',
+	plarform varchar not null default ''
+);
+
 -- категории товаров
 create table if not exists products.categories_items(
-	id bigserial primary key,
-	name varchar not null default ''
+	name varchar not null default '',
+	seller_id bigint references products.sellers(id), 
+	unique(seller_id, name)
 );
 
 -- категории имеют древовидную структуру
 -- (может ли категория иметь более одного родителя?)
 create table if not exists products.categories_relations(
-	id bigint references products.categories_items(id),
-	parent_id bigint references products.categories_items(id)
+	id bigint references products.categories_items(id) on delete cascade
+	parent_id bigint references products.categories_items(id) on delete cascade
 );
 
 -- имена категорий на разных языках
@@ -56,7 +63,7 @@ create type products.attributes_type as enum(
 -- каталог аттрибутов
 create table if not exists products.attributes_items(
 	id bigserial primary key,
-	name varchar not null default '',
+	name varchar not null default '' ,
 	type products.attributes_type not null,
 	unique(name)
 );

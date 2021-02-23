@@ -4,9 +4,10 @@ go 1.15
 
 require (
 	github.com/golang/protobuf v1.4.3
-	github.com/grpc-ecosystem/grpc-gateway v1.16.0
+	github.com/grpc-ecosystem/grpc-gateway v1.9.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.2.0
 	github.com/jackc/pgx/v4 v4.10.1
+	github.com/pkg/errors v0.8.1
 	github.com/spf13/pflag v1.0.3
 	github.com/spf13/viper v1.7.1
 	golang.org/x/sync v0.0.0-20201207232520-09787c993a3a

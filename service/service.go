@@ -1,13 +1,18 @@
 package service
 
-import "github.com/jackc/pgx/v4/pgxpool"
+import (
+	"gitlab.com/cadaverine/pim-service/helpers/db"
+
+	gen "gitlab.com/cadaverine/pim-service/gen/go/api/pim-service"
+)
 
 // PimService ...
 type PimService struct {
-	db *pgxpool.Pool
+	db db.IAdapter
+	gen.UnimplementedPimServiceServer
 }
 
 // NewPimService ...
-func NewPimService(db *pgxpool.Pool) *PimService {
-	return &PimService{db}
+func NewPimService(db db.IAdapter) *PimService {
+	return &PimService{db: db}
 }
