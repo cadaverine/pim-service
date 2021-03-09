@@ -139,6 +139,24 @@ func local_request_PimService_AddBrands_0(ctx context.Context, marshaler runtime
 
 }
 
+func request_PimService_GetAllCategories_0(ctx context.Context, marshaler runtime.Marshaler, client PimServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq Empty
+	var metadata runtime.ServerMetadata
+
+	msg, err := client.GetAllCategories(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_PimService_GetAllCategories_0(ctx context.Context, marshaler runtime.Marshaler, server PimServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq Empty
+	var metadata runtime.ServerMetadata
+
+	msg, err := server.GetAllCategories(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
 // RegisterPimServiceHandlerServer registers the http handlers for service PimService to "mux".
 // UnaryRPC     :call PimServiceServer directly.
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
@@ -211,6 +229,29 @@ func RegisterPimServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux,
 		}
 
 		forward_PimService_AddBrands_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("GET", pattern_PimService_GetAllCategories_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pim.service.v1.PimService/GetAllCategories")
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_PimService_GetAllCategories_0(rctx, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_PimService_GetAllCategories_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -315,6 +356,26 @@ func RegisterPimServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 
 	})
 
+	mux.Handle("GET", pattern_PimService_GetAllCategories_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/pim.service.v1.PimService/GetAllCategories")
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_PimService_GetAllCategories_0(rctx, inboundMarshaler, client, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_PimService_GetAllCategories_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
 	return nil
 }
 
@@ -324,6 +385,8 @@ var (
 	pattern_PimService_SearchBrands_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"brands"}, ""))
 
 	pattern_PimService_AddBrands_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"brands"}, ""))
+
+	pattern_PimService_GetAllCategories_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"categories"}, ""))
 )
 
 var (
@@ -332,4 +395,6 @@ var (
 	forward_PimService_SearchBrands_0 = runtime.ForwardResponseMessage
 
 	forward_PimService_AddBrands_0 = runtime.ForwardResponseMessage
+
+	forward_PimService_GetAllCategories_0 = runtime.ForwardResponseMessage
 )

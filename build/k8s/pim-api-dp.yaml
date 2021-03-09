@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pim-api-dp
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: pim-api
+  template:
+    metadata:
+      labels:
+        app: pim-api
+    spec:
+      containers:
+      - name: pim-api
+        image: cadaverine/pim-api
+        imagePullPolicy: Never
+        ports:
+            - containerPort: 7070
+            - containerPort: 9090
+        env:
+          - name: DB_HOST
+            value: db
+        resources:
+          limits:
+            cpu: "2"
+            memory: "512Mi"
+          requests:
+            memory: "128Mi"
+            cpu: "1"

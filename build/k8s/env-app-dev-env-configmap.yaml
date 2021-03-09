@@ -1,9 +1,0 @@
-apiVersion: v1
-data:
-  DB_HOST: database
-kind: ConfigMap
-metadata:
-  creationTimestamp: null
-  labels:
-    io.kompose.service: pim-service-env-app-dev-env
-  name: env-app-dev-env

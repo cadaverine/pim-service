@@ -24,6 +24,22 @@ service PimService {
             post: "/brands"
         };
     }
+
+    rpc GetAllCategories(Empty) returns (Categories) {
+        option (google.api.http) = {
+            get: "/categories"
+        };
+    }
+}
+
+message Categories {
+    repeated Category categories = 1;
+}
+
+message Category {
+    int32 ID = 1;
+    string name = 2;
+    repeated Category children = 3;
 }
 
 message SearchRequest {

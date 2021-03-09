@@ -12,8 +12,8 @@ type currencies struct {
 }
 
 type category struct {
-	ID       string `xml:"id,attr"`
-	ParentID string `xml:"parentId,attr"`
+	ID       int    `xml:"id,attr"`
+	ParentID int    `xml:"parentId,attr"`
 	Title    string `xml:",chardata"`
 }
 

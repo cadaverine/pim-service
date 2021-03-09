@@ -1,9 +1,7 @@
 package service
 
 import (
-	"context"
 	"encoding/xml"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -12,17 +10,18 @@ import (
 
 // UploadXML загрузка каталога
 func (s *PimService) UploadXML(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
+	ctx := r.Context()
+
 	cg, err := getCatalogFromRequest(r)
 	if err != nil {
 		http.Error(w, "failed to parse multipart message", http.StatusBadRequest)
 		return
 	}
 
-	fmt.Printf("%+v", cg)
-}
-
-func (s *PimService) SaveCatalog(ctx context.Context, cg *catalog) error {
-	return nil
+	err = s.SaveCatalog(ctx, cg)
+	if err != nil {
+		http.Error(w, "failed to save catalog", http.StatusInternalServerError)
+	}
 }
 
 func getCatalogFromRequest(req *http.Request) (*catalog, error) {

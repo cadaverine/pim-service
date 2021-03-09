@@ -22,5 +22,3 @@ services:
     environment:
       SWAGGER_JSON: /openapi.json
       API_URL: pim-service:8080
-
-

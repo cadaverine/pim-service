@@ -9,38 +9,24 @@ import (
 
 // AddBrands ...
 func (s *PimService) AddBrands(ctx context.Context, req *gen.Brands) (*gen.Empty, error) {
-	err := s.db.InTx(ctx, nil, func(tx pgx.Tx) error {
-		for _, brand := range req.GetBrands() {
-			err := addBrand(ctx, tx, brand)
-			if err != nil {
-				return err
-			}
-		}
-
-		return nil
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return &gen.Empty{}, nil
-}
-
-func addBrand(ctx context.Context, tx pgx.Tx, brand *gen.Brand) error {
 	const query = `
 		insert into catalogs.brands (name, logo, site, company)
 		values ($1, $2, $3, $4);
 	`
 
-	_, err := tx.Exec(ctx, query,
-		brand.GetName(),
-		brand.GetLogo(),
-		brand.GetSite(),
-		brand.GetCompany(),
-	)
-	if err != nil {
-		return err
+	batch := &pgx.Batch{}
+
+	for _, brand := range req.GetBrands() {
+		batch.Queue(query,
+			brand.GetName(),
+			brand.GetLogo(),
+			brand.GetSite(),
+			brand.GetCompany(),
+		)
 	}
 
-	return nil
+	return &gen.Empty{}, s.db.InTx(ctx, nil, func(tx pgx.Tx) error {
+		_, err := tx.SendBatch(ctx, batch).Exec()
+		return err
+	})
 }

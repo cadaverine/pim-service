@@ -28,7 +28,7 @@ var (
 	grpcPort = pflag.String("grpc_port", ":9090", "grpc port")
 	httpPort = pflag.String("http_port", ":7070", "http port")
 	network  = pflag.String("network", "tcp", `one of "tcp" or "unix". Must be consistent to -endpoint`)
-	dbHost   = pflag.String("db_host", "database", "")
+	dbHost   = pflag.String("db_host", "localhost", "")
 	dbPort   = pflag.String("db_port", "5432", "")
 	dbUser   = pflag.String("db_user", "postgres", "")
 	dbName   = pflag.String("db_name", "pim_db", "")
@@ -81,6 +81,8 @@ func run() error {
 	})
 
 	mux := runtime.NewServeMux()
+
+	registerRoutes(mux, svc)
 
 	group.Go(func() error {
 		return gw.RegisterPimServiceHandlerServer(ctx, mux, svc)
