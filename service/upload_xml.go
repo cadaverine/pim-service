@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/pkg/errors"
+	"gitlab.com/cadaverine/pim-service/models"
 )
 
 // UploadXML загрузка каталога
@@ -20,11 +21,11 @@ func (s *PimService) UploadXML(w http.ResponseWriter, r *http.Request, pathParam
 
 	err = s.SaveCatalog(ctx, cg)
 	if err != nil {
-		http.Error(w, "failed to save catalog", http.StatusInternalServerError)
+		http.Error(w, errors.Wrap(err, "failed to save catalog").Error(), http.StatusInternalServerError)
 	}
 }
 
-func getCatalogFromRequest(req *http.Request) (*catalog, error) {
+func getCatalogFromRequest(req *http.Request) (*models.Catalog, error) {
 	err := req.ParseMultipartForm(32 << 20)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse multipart message")
@@ -38,7 +39,7 @@ func getCatalogFromRequest(req *http.Request) (*catalog, error) {
 
 	bytes, err := ioutil.ReadAll(file)
 
-	var cg catalog
+	var cg models.Catalog
 
 	err = xml.Unmarshal(bytes, &cg)
 	if err != nil {

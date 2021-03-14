@@ -3,23 +3,35 @@ package service
 import (
 	"context"
 
-	"github.com/jackc/pgx/v4"
+	"github.com/jmoiron/sqlx"
+	"gitlab.com/cadaverine/pim-service/models"
 )
 
-func (s *PimService) SaveCatalog(ctx context.Context, cg *catalog) error {
-	return s.db.InTx(ctx, nil, func(tx pgx.Tx) error {
-		for _, shop := range cg.Shops {
-			err := s.UpdateCategories(ctx, tx, shop.Name, shop.Categories.Categories)
+// SaveCatalog ...
+func (s *PimService) SaveCatalog(ctx context.Context, cg *models.Catalog) error {
+	for _, shop := range cg.Shops {
+		err := s.db.InTx(ctx, nil, func(tx *sqlx.Tx) error {
+			shopID, err := s.SaveShop(ctx, shop)
 			if err != nil {
 				return err
 			}
 
-			err = s.UpdateProducts(ctx, tx, shop.Name, shop.Offers.Offers)
+			err = s.SaveCategories(ctx, tx, shopID, shop.Categories.Categories)
 			if err != nil {
 				return err
 			}
+
+			err = s.SaveProducts(ctx, tx, shopID, shop.Offers.Offers)
+			if err != nil {
+				return err
+			}
+
+			return nil
+		})
+		if err != nil {
+			return err
 		}
+	}
 
-		return nil
-	})
+	return nil
 }

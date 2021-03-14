@@ -3,7 +3,7 @@ package db
 import (
 	"context"
 
-	"github.com/jackc/pgx/v4"
+	"github.com/jmoiron/sqlx"
 )
 
 // Conf config for db connection
@@ -17,7 +17,7 @@ type Conf struct {
 
 // IAdapter db adapter interface
 type IAdapter interface {
-	InTx(ctx context.Context, tx pgx.Tx, fn func(pgx.Tx) error) (err error)
+	InTx(ctx context.Context, tx *sqlx.Tx, fn func(*sqlx.Tx) error) (err error)
 }
 
 // New creates new db adapter

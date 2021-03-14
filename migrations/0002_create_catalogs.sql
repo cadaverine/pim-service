@@ -15,16 +15,20 @@ create table if not exists catalogs.languages(
 create trigger set_timestamp after update on catalogs.languages
 for each row execute procedure trigger_set_timestamp();
 
+
 create table if not exists catalogs.currencies(
-	code varchar primary key,
+	code varchar not null default '',
+	name varchar not null default '',
 	rate integer not null default 1,
 	created_at timestamp not null default now(),
 	updated_at timestamp not null default now(),
-	deleted_at timestamp
+	deleted_at timestamp,
+	primary key (code)
 );
 
-create trigger set_timestamp after update on catalogs.languages
+create trigger set_timestamp after update on catalogs.currencies
 for each row execute procedure trigger_set_timestamp();
+
 
 -- +goose Down
 drop schema if exists catalogs cascade;

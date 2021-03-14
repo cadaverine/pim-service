@@ -18,10 +18,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PimServiceClient interface {
-	Echo(ctx context.Context, in *String, opts ...grpc.CallOption) (*String, error)
-	SearchBrands(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (*Brands, error)
-	AddBrands(ctx context.Context, in *Brands, opts ...grpc.CallOption) (*Empty, error)
-	GetAllCategories(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Categories, error)
+	SearchProducts(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (*Products, error)
+	GetAllCategoriesByShop(ctx context.Context, in *ShopID, opts ...grpc.CallOption) (*CategoriesTrees, error)
 }
 
 type pimServiceClient struct {
@@ -32,36 +30,18 @@ func NewPimServiceClient(cc grpc.ClientConnInterface) PimServiceClient {
 	return &pimServiceClient{cc}
 }
 
-func (c *pimServiceClient) Echo(ctx context.Context, in *String, opts ...grpc.CallOption) (*String, error) {
-	out := new(String)
-	err := c.cc.Invoke(ctx, "/pim.service.v1.PimService/Echo", in, out, opts...)
+func (c *pimServiceClient) SearchProducts(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (*Products, error) {
+	out := new(Products)
+	err := c.cc.Invoke(ctx, "/pim.service.v1.PimService/SearchProducts", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *pimServiceClient) SearchBrands(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (*Brands, error) {
-	out := new(Brands)
-	err := c.cc.Invoke(ctx, "/pim.service.v1.PimService/SearchBrands", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *pimServiceClient) AddBrands(ctx context.Context, in *Brands, opts ...grpc.CallOption) (*Empty, error) {
-	out := new(Empty)
-	err := c.cc.Invoke(ctx, "/pim.service.v1.PimService/AddBrands", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *pimServiceClient) GetAllCategories(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Categories, error) {
-	out := new(Categories)
-	err := c.cc.Invoke(ctx, "/pim.service.v1.PimService/GetAllCategories", in, out, opts...)
+func (c *pimServiceClient) GetAllCategoriesByShop(ctx context.Context, in *ShopID, opts ...grpc.CallOption) (*CategoriesTrees, error) {
+	out := new(CategoriesTrees)
+	err := c.cc.Invoke(ctx, "/pim.service.v1.PimService/GetAllCategoriesByShop", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -72,10 +52,8 @@ func (c *pimServiceClient) GetAllCategories(ctx context.Context, in *Empty, opts
 // All implementations must embed UnimplementedPimServiceServer
 // for forward compatibility
 type PimServiceServer interface {
-	Echo(context.Context, *String) (*String, error)
-	SearchBrands(context.Context, *SearchRequest) (*Brands, error)
-	AddBrands(context.Context, *Brands) (*Empty, error)
-	GetAllCategories(context.Context, *Empty) (*Categories, error)
+	SearchProducts(context.Context, *SearchRequest) (*Products, error)
+	GetAllCategoriesByShop(context.Context, *ShopID) (*CategoriesTrees, error)
 	mustEmbedUnimplementedPimServiceServer()
 }
 
@@ -83,17 +61,11 @@ type PimServiceServer interface {
 type UnimplementedPimServiceServer struct {
 }
 
-func (UnimplementedPimServiceServer) Echo(context.Context, *String) (*String, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Echo not implemented")
+func (UnimplementedPimServiceServer) SearchProducts(context.Context, *SearchRequest) (*Products, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchProducts not implemented")
 }
-func (UnimplementedPimServiceServer) SearchBrands(context.Context, *SearchRequest) (*Brands, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SearchBrands not implemented")
-}
-func (UnimplementedPimServiceServer) AddBrands(context.Context, *Brands) (*Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddBrands not implemented")
-}
-func (UnimplementedPimServiceServer) GetAllCategories(context.Context, *Empty) (*Categories, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAllCategories not implemented")
+func (UnimplementedPimServiceServer) GetAllCategoriesByShop(context.Context, *ShopID) (*CategoriesTrees, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllCategoriesByShop not implemented")
 }
 func (UnimplementedPimServiceServer) mustEmbedUnimplementedPimServiceServer() {}
 
@@ -108,74 +80,38 @@ func RegisterPimServiceServer(s grpc.ServiceRegistrar, srv PimServiceServer) {
 	s.RegisterService(&PimService_ServiceDesc, srv)
 }
 
-func _PimService_Echo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(String)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PimServiceServer).Echo(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pim.service.v1.PimService/Echo",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PimServiceServer).Echo(ctx, req.(*String))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PimService_SearchBrands_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _PimService_SearchProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SearchRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PimServiceServer).SearchBrands(ctx, in)
+		return srv.(PimServiceServer).SearchProducts(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pim.service.v1.PimService/SearchBrands",
+		FullMethod: "/pim.service.v1.PimService/SearchProducts",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PimServiceServer).SearchBrands(ctx, req.(*SearchRequest))
+		return srv.(PimServiceServer).SearchProducts(ctx, req.(*SearchRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PimService_AddBrands_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Brands)
+func _PimService_GetAllCategoriesByShop_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ShopID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PimServiceServer).AddBrands(ctx, in)
+		return srv.(PimServiceServer).GetAllCategoriesByShop(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pim.service.v1.PimService/AddBrands",
+		FullMethod: "/pim.service.v1.PimService/GetAllCategoriesByShop",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PimServiceServer).AddBrands(ctx, req.(*Brands))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PimService_GetAllCategories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PimServiceServer).GetAllCategories(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pim.service.v1.PimService/GetAllCategories",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PimServiceServer).GetAllCategories(ctx, req.(*Empty))
+		return srv.(PimServiceServer).GetAllCategoriesByShop(ctx, req.(*ShopID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -188,20 +124,12 @@ var PimService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*PimServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Echo",
-			Handler:    _PimService_Echo_Handler,
+			MethodName: "SearchProducts",
+			Handler:    _PimService_SearchProducts_Handler,
 		},
 		{
-			MethodName: "SearchBrands",
-			Handler:    _PimService_SearchBrands_Handler,
-		},
-		{
-			MethodName: "AddBrands",
-			Handler:    _PimService_AddBrands_Handler,
-		},
-		{
-			MethodName: "GetAllCategories",
-			Handler:    _PimService_GetAllCategories_Handler,
+			MethodName: "GetAllCategoriesByShop",
+			Handler:    _PimService_GetAllCategoriesByShop_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

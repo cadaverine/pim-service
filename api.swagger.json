@@ -11,14 +11,14 @@
     "application/json"
   ],
   "paths": {
-    "/brands": {
+    "/shop/{shopID}/categories": {
       "get": {
-        "operationId": "SearchBrands",
+        "operationId": "GetAllCategoriesByShop",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1Brands"
+              "$ref": "#/definitions/v1CategoriesTrees"
             }
           },
           "default": {
@@ -30,22 +30,9 @@
         },
         "parameters": [
           {
-            "name": "searchTerm",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "meta.limit",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "meta.offset",
-            "in": "query",
-            "required": false,
+            "name": "shopID",
+            "in": "path",
+            "required": true,
             "type": "integer",
             "format": "int32"
           }
@@ -53,58 +40,16 @@
         "tags": [
           "PimService"
         ]
-      },
+      }
+    },
+    "/shop/{shopID}/get-products": {
       "post": {
-        "operationId": "AddBrands",
+        "operationId": "SearchProducts",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1Empty"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response",
-            "schema": {
-              "$ref": "#/definitions/runtimeError"
-            }
-          }
-        },
-        "tags": [
-          "PimService"
-        ]
-      }
-    },
-    "/categories": {
-      "get": {
-        "operationId": "GetAllCategories",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1Categories"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response",
-            "schema": {
-              "$ref": "#/definitions/runtimeError"
-            }
-          }
-        },
-        "tags": [
-          "PimService"
-        ]
-      }
-    },
-    "/echo": {
-      "get": {
-        "operationId": "Echo",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1String"
+              "$ref": "#/definitions/v1Products"
             }
           },
           "default": {
@@ -116,10 +61,11 @@
         },
         "parameters": [
           {
-            "name": "value",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "name": "shopID",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
           }
         ],
         "tags": [
@@ -129,6 +75,15 @@
     }
   },
   "definitions": {
+    "SearchRequestFilters": {
+      "type": "object",
+      "properties": {
+        "available": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
     "protobufAny": {
       "type": "object",
       "properties": {
@@ -162,42 +117,7 @@
         }
       }
     },
-    "v1Brand": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "format": "int64"
-        },
-        "name": {
-          "type": "string"
-        },
-        "company": {
-          "type": "string"
-        },
-        "logo": {
-          "type": "string"
-        },
-        "site": {
-          "type": "string"
-        }
-      }
-    },
-    "v1Brands": {
-      "type": "object",
-      "properties": {
-        "brands": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/v1Brand"
-          }
-        },
-        "meta": {
-          "$ref": "#/definitions/v1ScrollDescriptor"
-        }
-      }
-    },
-    "v1Categories": {
+    "v1CategoriesTrees": {
       "type": "object",
       "properties": {
         "categories": {
@@ -226,8 +146,39 @@
         }
       }
     },
-    "v1Empty": {
-      "type": "object"
+    "v1Product": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "ItemID": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "ShopID": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Name": {
+          "type": "string"
+        }
+      }
+    },
+    "v1Products": {
+      "type": "object",
+      "properties": {
+        "products": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Product"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/v1ScrollDescriptor"
+        }
+      }
     },
     "v1ScrollDescriptor": {
       "type": "object",
@@ -239,14 +190,6 @@
         "offset": {
           "type": "integer",
           "format": "int32"
-        }
-      }
-    },
-    "v1String": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "string"
         }
       }
     }

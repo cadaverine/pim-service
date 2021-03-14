@@ -4,33 +4,30 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/jackc/pgx/v4"
-	"github.com/jackc/pgx/v4/log/log15adapter"
-	"github.com/jackc/pgx/v4/pgxpool"
-
-	log "gopkg.in/inconshreveable/log15.v2"
+	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 )
 
 type adapter struct {
-	db *pgxpool.Pool
+	db *sqlx.DB
 }
 
 // InTx ...
-func (a *adapter) InTx(ctx context.Context, tx pgx.Tx, fn func(pgx.Tx) error) (err error) {
+func (a *adapter) InTx(ctx context.Context, tx *sqlx.Tx, fn func(*sqlx.Tx) error) (err error) {
 	if tx == nil {
-		tx, err = a.db.Begin(ctx)
+		tx, err = a.db.BeginTxx(ctx, nil)
 		if err != nil {
 			return
 		}
 
 		defer func() {
 			if p := recover(); p != nil {
-				_ = tx.Rollback(ctx)
+				_ = tx.Rollback()
 				panic(p)
 			} else if err != nil {
-				_ = tx.Rollback(ctx)
+				_ = tx.Rollback()
 			} else {
-				err = tx.Commit(ctx)
+				err = tx.Commit()
 			}
 		}()
 	}
@@ -40,12 +37,7 @@ func (a *adapter) InTx(ctx context.Context, tx pgx.Tx, fn func(pgx.Tx) error) (e
 }
 
 func newAdapter(ctx context.Context, conf Conf) (*adapter, error) {
-	poolConf, err := getPoolConf(conf)
-	if err != nil {
-		return nil, err
-	}
-
-	db, err := pgxpool.ConnectConfig(ctx, poolConf)
+	db, err := sqlx.Connect("postgres", getDSN(conf))
 	if err != nil {
 		return nil, err
 	}
@@ -55,19 +47,7 @@ func newAdapter(ctx context.Context, conf Conf) (*adapter, error) {
 	}, nil
 }
 
-func getPoolConf(conf Conf) (*pgxpool.Config, error) {
+func getDSN(conf Conf) string {
 	dsnTemplate := "host=%s port=%s user=%s password=%s dbname=%s sslmode=disable"
-
-	dsn := fmt.Sprintf(dsnTemplate, conf.Host, conf.Port, conf.User, conf.Pass, conf.Name)
-
-	logger := log15adapter.NewLogger(log.New("module", "pgx"))
-
-	poolConfig, err := pgxpool.ParseConfig(dsn)
-	if err != nil {
-		return nil, err
-	}
-
-	poolConfig.ConnConfig.Logger = logger
-
-	return poolConfig, nil
+	return fmt.Sprintf(dsnTemplate, conf.Host, conf.Port, conf.User, conf.Pass, conf.Name)
 }

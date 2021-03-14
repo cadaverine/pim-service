@@ -6,8 +6,9 @@ require (
 	github.com/golang/protobuf v1.4.3
 	github.com/grpc-ecosystem/grpc-gateway v1.9.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.2.0
-	github.com/jackc/pgx/v4 v4.10.1
 	github.com/jmoiron/sqlx v1.3.1
+	github.com/lib/pq v1.3.0
+	github.com/mattn/go-colorable v0.1.6 // indirect
 	github.com/pkg/errors v0.8.1
 	github.com/spf13/pflag v1.0.3
 	github.com/spf13/viper v1.7.1

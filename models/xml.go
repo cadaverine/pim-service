@@ -1,32 +1,32 @@
-package service
+package models
 
 import "encoding/xml"
 
-type currency struct {
+type Currency struct {
 	ID   string `xml:"id,attr"`
 	Rate string `xml:"rate,attr"`
 }
 
-type currencies struct {
-	Currencies []currency `xml:"currency"`
+type Currencies struct {
+	Currencies []Currency `xml:"currency"`
 }
 
-type category struct {
+type Category struct {
 	ID       int    `xml:"id,attr"`
-	ParentID int    `xml:"parentId,attr"`
+	ParentID int    `xml:"parentId,attr" db:"parent_id"`
 	Title    string `xml:",chardata"`
 }
 
-type categories struct {
-	Categories []category `xml:"category"`
+type Categories struct {
+	Categories []Category `xml:"category"`
 }
 
-type param struct {
+type Param struct {
 	Name  string `xml:"name"`
 	Value string `xml:",chardata"`
 }
 
-type offer struct {
+type Offer struct {
 	ID          string  `xml:"id,attr"`
 	Available   bool    `xml:"available,attr"`
 	Type        string  `xml:"type,attr"`
@@ -38,26 +38,26 @@ type offer struct {
 	Picture     string  `xml:"picture"`
 	Vendor      string  `xml:"vendor"`
 	Description string  `xml:"description"`
-	Param       []param `xml:"param"`
+	Param       []Param `xml:"param"`
 }
 
-type offers struct {
-	Offers []offer `xml:"offer"`
+type Offers struct {
+	Offers []Offer `xml:"offer"`
 }
 
-type shop struct {
+type Shop struct {
 	// XMLName    xml.Name   `xml:"shop"`
 	Name       string     `xml:"name"`
 	Company    string     `xml:"company"`
 	URL        string     `xml:"url"`
 	Platform   string     `xml:"platform"`
-	Currencies currencies `xml:"currencies"`
-	Categories categories `xml:"categories"`
-	Offers     offers     `xml:"offers"`
+	Currencies Currencies `xml:"currencies"`
+	Categories Categories `xml:"categories"`
+	Offers     Offers     `xml:"offers"`
 }
 
-type catalog struct {
+type Catalog struct {
 	XMLName xml.Name `xml:"yml_catalog"`
 	Date    string   `xml:"date,attr"`
-	Shops   []shop   `xml:"shop"`
+	Shops   []Shop   `xml:"shop"`
 }
