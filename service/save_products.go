@@ -108,7 +108,6 @@ func (s *PimService) addProductAttributes(ctx context.Context, tx *sqlx.Tx, prod
 			value, _ := json.Marshal(map[string]interface{}{
 				"type":  defaultType,
 				"value": params[i].Value,
-				// "meta":  "meta",
 			})
 
 			_, err := tx.Exec(query,
