@@ -19,6 +19,7 @@ import (
 
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/encoding/protojson"
 
 	log "gopkg.in/inconshreveable/log15.v2"
 )
@@ -80,7 +81,11 @@ func run() error {
 		return grpcServer.Serve(lis)
 	})
 
-	mux := runtime.NewServeMux()
+	mux := runtime.NewServeMux(runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{
+		MarshalOptions: protojson.MarshalOptions{
+			EmitUnpopulated: false,
+		},
+	}))
 
 	registerRoutes(mux, svc)
 

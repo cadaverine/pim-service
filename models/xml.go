@@ -24,10 +24,13 @@ type Categories struct {
 type Param struct {
 	Name  string `xml:"name,attr"`
 	Value string `xml:",chardata"`
+	Type  string
 }
 
 type Offer struct {
-	ID          string  `xml:"id,attr"`
+	ID          int
+	ShopID      int
+	ItemID      string  `xml:"id,attr"`
 	Available   bool    `xml:"available,attr"`
 	Type        string  `xml:"type,attr"`
 	URL         string  `xml:"url"`

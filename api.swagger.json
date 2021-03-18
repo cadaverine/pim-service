@@ -66,6 +66,14 @@
             "required": true,
             "type": "integer",
             "format": "int32"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1SearchRequest"
+            }
           }
         ],
         "tags": [
@@ -75,6 +83,20 @@
     }
   },
   "definitions": {
+    "ProductParam": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "value": {
+          "type": "object"
+        }
+      }
+    },
     "SearchRequestFilters": {
       "type": "object",
       "properties": {
@@ -95,6 +117,14 @@
           "format": "byte"
         }
       }
+    },
+    "protobufNullValue": {
+      "type": "string",
+      "enum": [
+        "NULL_VALUE"
+      ],
+      "default": "NULL_VALUE",
+      "description": "`NullValue` is a singleton enumeration to represent the null value for the\n`Value` type union.\n\n The JSON representation for `NullValue` is JSON `null`.\n\n - NULL_VALUE: Null value."
     },
     "runtimeError": {
       "type": "object",
@@ -153,16 +183,42 @@
           "type": "integer",
           "format": "int32"
         },
-        "ItemID": {
+        "itemID": {
           "type": "integer",
           "format": "int32"
         },
-        "ShopID": {
+        "shopID": {
           "type": "integer",
           "format": "int32"
         },
-        "Name": {
+        "name": {
           "type": "string"
+        },
+        "available": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "type": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "price": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "vendor": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "params": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ProductParam"
+          }
         }
       }
     },
@@ -190,6 +246,24 @@
         "offset": {
           "type": "integer",
           "format": "int32"
+        }
+      }
+    },
+    "v1SearchRequest": {
+      "type": "object",
+      "properties": {
+        "shopID": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "filters": {
+          "$ref": "#/definitions/SearchRequestFilters"
+        },
+        "searchTerm": {
+          "type": "string"
+        },
+        "meta": {
+          "$ref": "#/definitions/v1ScrollDescriptor"
         }
       }
     }

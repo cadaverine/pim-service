@@ -64,7 +64,7 @@ func (s *PimService) addProduct(ctx context.Context, tx *sqlx.Tx, shopID int, of
 
 	err := s.db.InTx(ctx, tx, func(tx *sqlx.Tx) error {
 		err := tx.Get(&productID, query,
-			offer.ID,
+			offer.ItemID,
 			shopID,
 			offer.Name,
 			offer.Available,

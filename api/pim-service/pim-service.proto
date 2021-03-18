@@ -6,11 +6,13 @@ option go_package = ".;pim_service";
 
 import "google/api/annotations.proto";
 import "google/protobuf/wrappers.proto";
+import "google/protobuf/struct.proto";
 
 service PimService {
     rpc SearchProducts(SearchRequest) returns (Products) {
         option (google.api.http) = {
             post: "/shop/{shopID}/get-products"
+            body: "*"
         };
     }
 
@@ -52,9 +54,22 @@ message ScrollDescriptor {
 
 message Product {
     int32 ID = 1;
-    int32 ItemID = 2;
-    int32 ShopID = 3;
-    string Name = 4;
+    int32 itemID = 2;
+    int32 shopID = 3;
+    string name = 4;
+    bool available = 5;
+    string type = 6;
+    string url = 7;
+    int32 price = 8;
+    string vendor = 9;
+    string description = 10;
+
+    message Param {
+        string name = 1;
+        string type = 2;
+        google.protobuf.Struct value = 3;
+    }
+    repeated Param params = 11;
 }
 
 message Products {
