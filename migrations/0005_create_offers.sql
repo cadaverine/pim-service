@@ -1,7 +1,7 @@
 -- +goose Up
 
 -- допустимые типы аттрибутов
-create type if not exists product_information.attributes_type as enum(
+create type product_information.attributes_type as enum(
 	'string',
 	'integer',
 	'float',

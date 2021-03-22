@@ -2,11 +2,12 @@ package service
 
 import (
 	"context"
+	"database/sql"
 	"strconv"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
-	gen "gitlab.com/cadaverine/pim-service/gen/go/api/pim-service"
+	gen "gitlab.com/cadaverine/pim-service/gen/pim-service"
 	"gitlab.com/cadaverine/pim-service/models"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -21,6 +22,16 @@ func (s *PimService) SearchProducts(ctx context.Context, req *gen.SearchRequest)
 	shopID := int(req.GetShopID())
 	searchTerm := req.GetSearchTerm()
 
+	available := req.GetFilters().GetAvailable()
+
+	var isAvailable sql.NullBool
+	if available != nil {
+		isAvailable = sql.NullBool{
+			Bool:  available.GetValue(),
+			Valid: true,
+		}
+	}
+
 	limit, offset := int(req.GetMeta().GetLimit()), int(req.GetMeta().GetOffset())
 
 	if limit == 0 || limit > maxLimit {
@@ -31,7 +42,7 @@ func (s *PimService) SearchProducts(ctx context.Context, req *gen.SearchRequest)
 	var offers []models.Offer
 
 	err = s.db.InTx(ctx, nil, func(tx *sqlx.Tx) error {
-		offers, err = s.searchOffers(ctx, tx, shopID, searchTerm, limit, offset)
+		offers, err = s.searchOffers(ctx, tx, shopID, searchTerm, isAvailable, limit, offset)
 		if err != nil {
 			return err
 		}
@@ -112,7 +123,7 @@ func repackOfferToProto(src models.Offer) *gen.Product {
 	}
 }
 
-func (s *PimService) searchOffers(ctx context.Context, tx *sqlx.Tx, shopID int, searchTerm string, limit, offset int) ([]models.Offer, error) {
+func (s *PimService) searchOffers(ctx context.Context, tx *sqlx.Tx, shopID int, searchTerm string, isVailable sql.NullBool, limit, offset int) ([]models.Offer, error) {
 	const query = `
 		select
 			id, item_id, shop_id, name,
@@ -122,16 +133,19 @@ func (s *PimService) searchOffers(ctx context.Context, tx *sqlx.Tx, shopID int, 
 		from product_information.products,
 			to_tsvector('russian', name) as src,
 			plainto_tsquery('russian', $2) as query
-		where shop_id = $1 and src @@ query
+		where
+			shop_id = $1 and deleted_at is null and
+			($3::bool is null or available = $3) and
+			src @@ query
 		order by ts_rank(src, query) desc
-		limit $3
-		offset $4;
+		limit $4
+		offset $5;
 	`
 
 	var offers []models.Offer
 
 	err := s.db.InTx(ctx, nil, func(tx *sqlx.Tx) error {
-		rows, err := tx.Query(query, shopID, searchTerm, limit, offset)
+		rows, err := tx.Query(query, shopID, searchTerm, isVailable, limit, offset)
 		if err != nil {
 			return err
 		}

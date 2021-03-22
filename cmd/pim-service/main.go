@@ -9,7 +9,7 @@ import (
 	"net"
 	"net/http"
 
-	gw "gitlab.com/cadaverine/pim-service/gen/go/api/pim-service"
+	gw "gitlab.com/cadaverine/pim-service/gen/pim-service"
 	"gitlab.com/cadaverine/pim-service/helpers/db"
 	"gitlab.com/cadaverine/pim-service/service"
 

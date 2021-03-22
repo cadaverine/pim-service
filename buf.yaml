@@ -1,0 +1,13 @@
+version: v1beta1
+name: buf.build/cadaverine/pim-service
+deps:
+  - buf.build/beta/googleapis
+build:
+  roots:
+    - proto
+lint:
+  use:
+    - DEFAULT
+breaking:
+  use:
+    - FILE

@@ -3,7 +3,7 @@ package service
 import (
 	"gitlab.com/cadaverine/pim-service/helpers/db"
 
-	gen "gitlab.com/cadaverine/pim-service/gen/go/api/pim-service"
+	gen "gitlab.com/cadaverine/pim-service/gen/pim-service"
 )
 
 // PimService ...

@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/jmoiron/sqlx"
-	gen "gitlab.com/cadaverine/pim-service/gen/go/api/pim-service"
+	gen "gitlab.com/cadaverine/pim-service/gen/pim-service"
 	"gitlab.com/cadaverine/pim-service/models"
 )
 
