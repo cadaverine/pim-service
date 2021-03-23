@@ -63,6 +63,9 @@ func run() error {
 		Pass: *dbPass,
 		Name: *dbName,
 	})
+	if err != nil {
+		return err
+	}
 
 	svc := service.NewPimService(dbAdp)
 
@@ -70,10 +73,11 @@ func run() error {
 	if err != nil {
 		return err
 	}
+	defer lis.Close()
 
 	grpcServer := grpc.NewServer()
 
-	gw.RegisterPimServiceServer(grpcServer, svc)
+	gw.RegisterPimServiceServer(grpc.NewServer(), svc)
 
 	var group errgroup.Group
 
@@ -81,20 +85,29 @@ func run() error {
 		return grpcServer.Serve(lis)
 	})
 
-	mux := runtime.NewServeMux(runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{
+	gwMux := runtime.NewServeMux(runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{
 		MarshalOptions: protojson.MarshalOptions{
 			EmitUnpopulated: false,
 		},
 	}))
 
-	registerRoutes(mux, svc)
+	registerRoutes(gwMux, svc)
+
+	err = gw.RegisterPimServiceHandlerServer(ctx, gwMux, svc)
+	if err != nil {
+		return err
+	}
+
+	httpMux := http.NewServeMux()
+	httpMux.Handle("/", gwMux)
+	httpMux.Handle("/swagger",
+		http.StripPrefix("/swagger",
+			http.FileServer(http.Dir("swagger-ui/dist")),
+		),
+	)
 
 	group.Go(func() error {
-		return gw.RegisterPimServiceHandlerServer(ctx, mux, svc)
-	})
-
-	group.Go(func() error {
-		return http.ListenAndServe(*httpPort, mux)
+		return http.ListenAndServe(*httpPort, httpMux)
 	})
 
 	log.Info(fmt.Sprintf("server listening on '%s%s'", *host, *httpPort))
@@ -102,7 +115,6 @@ func run() error {
 	return group.Wait()
 }
 
-// grpc-gateway не поддерживает
 func registerRoutes(mux *runtime.ServeMux, svc *service.PimService) {
 	mux.HandlePath(http.MethodPost, "/upload-xml", svc.UploadXML)
 }

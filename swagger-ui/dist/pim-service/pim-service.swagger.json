@@ -1,0 +1,596 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "pim-service/pim-service.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "PimService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/shop/{shopID}/categories": {
+      "get": {
+        "operationId": "PimService_GetAllCategoriesByShop",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pim_serviceCategoriesTrees"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "shopID",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "PimService"
+        ]
+      }
+    },
+    "/shop/{shopID}/category": {
+      "post": {
+        "operationId": "PimService_CreateCategory",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "shopID",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pim_serviceCategory"
+            }
+          }
+        ],
+        "tags": [
+          "PimService"
+        ]
+      }
+    },
+    "/shop/{shopID}/category/{ID}": {
+      "get": {
+        "operationId": "PimService_GetCategory",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pim_serviceCategory"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "shopID",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "PimService"
+        ]
+      },
+      "delete": {
+        "operationId": "PimService_DeleteCategory",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "shopID",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "PimService"
+        ]
+      },
+      "put": {
+        "operationId": "PimService_UpdateCategory",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "shopID",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pim_serviceCategory"
+            }
+          }
+        ],
+        "tags": [
+          "PimService"
+        ]
+      }
+    },
+    "/shop/{shopID}/get-products": {
+      "post": {
+        "operationId": "PimService_SearchProducts",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pim_serviceProducts"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "shopID",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pim_serviceSearchRequest"
+            }
+          }
+        ],
+        "tags": [
+          "PimService"
+        ]
+      }
+    },
+    "/shop/{shopID}/product": {
+      "post": {
+        "operationId": "PimService_CreateProduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "shopID",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pim_serviceProduct"
+            }
+          }
+        ],
+        "tags": [
+          "PimService"
+        ]
+      }
+    },
+    "/shop/{shopID}/product/{ID}": {
+      "get": {
+        "operationId": "PimService_GetProduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pim_serviceProduct"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "shopID",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "PimService"
+        ]
+      },
+      "delete": {
+        "operationId": "PimService_DeleteProduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "shopID",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "PimService"
+        ]
+      },
+      "put": {
+        "operationId": "PimService_UpdateProduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "shopID",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pim_serviceProduct"
+            }
+          }
+        ],
+        "tags": [
+          "PimService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "ProductParam": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "value": {
+          "type": "object"
+        }
+      }
+    },
+    "SearchRequestFilters": {
+      "type": "object",
+      "properties": {
+        "available": {
+          "type": "boolean"
+        },
+        "categoriesIDs": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      }
+    },
+    "pim_serviceCategoriesTrees": {
+      "type": "object",
+      "properties": {
+        "categories": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pim_serviceCategory"
+          }
+        }
+      }
+    },
+    "pim_serviceCategory": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "shopID": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pim_serviceCategory"
+          }
+        }
+      }
+    },
+    "pim_serviceProduct": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "itemID": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "shopID": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        },
+        "available": {
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "price": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "vendor": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "params": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ProductParam"
+          }
+        }
+      }
+    },
+    "pim_serviceProducts": {
+      "type": "object",
+      "properties": {
+        "products": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pim_serviceProduct"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/pim_serviceScrollDescriptor"
+        }
+      }
+    },
+    "pim_serviceScrollDescriptor": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "offset": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "pim_serviceSearchRequest": {
+      "type": "object",
+      "properties": {
+        "shopID": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "filters": {
+          "$ref": "#/definitions/SearchRequestFilters"
+        },
+        "searchTerm": {
+          "type": "string"
+        },
+        "meta": {
+          "$ref": "#/definitions/pim_serviceScrollDescriptor"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "typeUrl": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "protobufNullValue": {
+      "type": "string",
+      "enum": [
+        "NULL_VALUE"
+      ],
+      "default": "NULL_VALUE",
+      "description": "`NullValue` is a singleton enumeration to represent the null value for the\n`Value` type union.\n\n The JSON representation for `NullValue` is JSON `null`.\n\n - NULL_VALUE: Null value."
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}

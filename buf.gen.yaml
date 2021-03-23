@@ -14,6 +14,6 @@ plugins:
       - paths=source_relative
       - generate_unbound_methods=true
   - name: openapiv2
-    out: gen
+    out: swagger-ui/dist
     opt:
       - allow_repeated_fields_in_body=true
