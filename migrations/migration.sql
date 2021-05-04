@@ -3,8 +3,8 @@ create database pim_db template template0 encoding UTF8 LC_COLLATE "ru_RU.UTF-8"
 create or replace function trigger_set_timestamp()
 returns trigger as $$
 begin
-  new.updated_at = now();
-  return new;
+    new.updated_at = now();
+    return new;
 end;
 $$ language plpgsql;
 
@@ -13,11 +13,11 @@ create schema if not exists catalogs;
 
 -- берем с api.hh.ru
 create table if not exists catalogs.languages(
-	code varchar primary key,
-	name varchar not null default '',
-	created_at timestamp not null default now(),
-	updated_at timestamp not null default now(),
-	deleted_at timestamp
+    code varchar primary key,
+    name varchar not null default '',
+    created_at timestamp not null default now(),
+    updated_at timestamp not null default now(),
+    deleted_at timestamp
 );
 
 create trigger set_timestamp after update on catalogs.languages
@@ -27,13 +27,13 @@ insert into catalogs.languages(code, name)
 values ('rus', 'Русский'), ('eng', 'Английский');
 
 create table if not exists catalogs.currencies(
-	code varchar not null default '',
-	name varchar not null default '',
-	rate integer not null default 1,
-	created_at timestamp not null default now(),
-	updated_at timestamp not null default now(),
-	deleted_at timestamp,
-	primary key (code)
+    code varchar not null default '',
+    name varchar not null default '',
+    rate integer not null default 1,
+    created_at timestamp not null default now(),
+    updated_at timestamp not null default now(),
+    deleted_at timestamp,
+    primary key (code)
 );
 
 create trigger set_timestamp after update on catalogs.currencies
@@ -46,15 +46,15 @@ values ('RUB', 'Российский рубль', 1);
 create schema if not exists product_information;
 
 create table if not exists product_information.shops(
-	id bigserial primary key,
-	name varchar not null default '',
-	company varchar not null default '',
-	url varchar not null default '',
-	platform varchar not null default '',
-	created_at timestamp not null default now(),
-	updated_at timestamp not null default now(),
-	deleted_at timestamp,
-	unique (name, company)
+    id bigserial primary key,
+    name varchar not null default '',
+    company varchar not null default '',
+    url varchar not null default '',
+    platform varchar not null default '',
+    created_at timestamp not null default now(),
+    updated_at timestamp not null default now(),
+    deleted_at timestamp,
+    unique (name, company)
 );
 
 create trigger set_timestamp before update on product_information.shops
@@ -62,15 +62,15 @@ for each row execute procedure trigger_set_timestamp();
 
 -- категории товаров
 create table if not exists product_information.categories(
-	id bigserial primary key,
-	item_id bigint not null default 0,
-	parent_id bigint not null default 0,
-	shop_id bigint references product_information.shops(id),
-	name varchar not null default '',
-	created_at timestamp not null default now(),
-	updated_at timestamp not null default now(),
-	deleted_at timestamp,
-	unique (shop_id, item_id)
+    id bigserial primary key,
+    item_id bigint not null default 0,
+    parent_id bigint not null default 0,
+    shop_id bigint references product_information.shops(id),
+    name varchar not null default '',
+    created_at timestamp not null default now(),
+    updated_at timestamp not null default now(),
+    deleted_at timestamp,
+    unique (shop_id, item_id)
 );
 
 create trigger set_timestamp before update on product_information.categories
@@ -78,12 +78,12 @@ for each row execute procedure trigger_set_timestamp();
 
 -- имена категорий на разных языках
 create table if not exists product_information.categories_translations(
-	category_id bigint references product_information.categories(id),
-	lang_code varchar references catalogs.languages(code),
-	translation varchar not null default '',
-	created_at timestamp not null default now(),
-	updated_at timestamp not null default now(),
-	deleted_at timestamp
+    category_id bigint references product_information.categories(id),
+    lang_code varchar references catalogs.languages(code),
+    translation varchar not null default '',
+    created_at timestamp not null default now(),
+    updated_at timestamp not null default now(),
+    deleted_at timestamp
 );
 
 create trigger set_timestamp before update on product_information.categories_translations
@@ -91,21 +91,21 @@ for each row execute procedure trigger_set_timestamp();
 
 -- допустимые типы аттрибутов
 create type product_information.attributes_type as enum(
-	'string',
-	'integer',
-	'float',
-	'date',
-	'time',
-	'fixed',
-	'media'
+    'string',
+    'integer',
+    'float',
+    'date',
+    'time',
+    'fixed',
+    'media'
 );
 
 -- товары
 create table if not exists product_information.products(
-	id bigserial primary key,
-	item_id varchar not null default '',
-	shop_id bigint references product_information.shops(id),
-	name varchar not null default '',
+    id bigserial primary key,
+    item_id varchar not null default '',
+    shop_id bigint references product_information.shops(id),
+    name varchar not null default '',
     available boolean not null default true,
     type varchar not null default '',
     url varchar not null default '',
@@ -113,10 +113,10 @@ create table if not exists product_information.products(
     currency_code varchar references catalogs.currencies (code),
     vendor varchar not null default '',
     description varchar not null default '',
-	created_at timestamp default current_timestamp,
-	updated_at timestamp default current_timestamp,
-	deleted_at timestamp,
-	unique (shop_id, item_id)
+    created_at timestamp default current_timestamp,
+    updated_at timestamp default current_timestamp,
+    deleted_at timestamp,
+    unique (shop_id, item_id)
 );
 
 create trigger set_timestamp after update on product_information.products
@@ -124,20 +124,20 @@ for each row execute procedure trigger_set_timestamp();
 
 -- категории конкретных товаров
 create table if not exists product_information.products_categories(
-	product_id bigint references product_information.products(id) on delete cascade,
-	category_id bigint references product_information.categories(id) on delete cascade,
+    product_id bigint references product_information.products(id) on delete cascade,
+    category_id bigint references product_information.categories(id) on delete cascade,
     unique (product_id, category_id)
 );
 
 -- аттрибуты конкретных товаров
 create table if not exists product_information.products_attributes(
-	id bigserial primary key,
-	product_id bigint references product_information.products(id),
+    id bigserial primary key,
+    product_id bigint references product_information.products(id),
     name varchar not null default '',
     type product_information.attributes_type not null,
-	value jsonb,
-	created_at timestamp default current_timestamp,
-	updated_at timestamp default current_timestamp,
+    value jsonb,
+    created_at timestamp default current_timestamp,
+    updated_at timestamp default current_timestamp,
     deleted_at timestamp,
     unique (product_id, name)
 );
@@ -147,12 +147,12 @@ for each row execute procedure trigger_set_timestamp();
 
 -- имена аттрибутов на разных языках
 create table if not exists product_information.products_attributes_translations(
-	attribute_id int references product_information.products_attributes(id),
-	lang_code varchar references catalogs.languages(code),
-	translation varchar not null default '',
+    attribute_id int references product_information.products_attributes(id),
+    lang_code varchar references catalogs.languages(code),
+    translation varchar not null default '',
     created_at timestamp not null default now(),
-	updated_at timestamp not null default now(),
-	deleted_at timestamp
+    updated_at timestamp not null default now(),
+    deleted_at timestamp
 );
 
 create trigger set_timestamp after update on product_information.products_attributes_translations
