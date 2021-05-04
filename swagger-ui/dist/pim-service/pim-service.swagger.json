@@ -472,8 +472,7 @@
           "format": "int32"
         },
         "itemID": {
-          "type": "integer",
-          "format": "int32"
+          "type": "string"
         },
         "shopID": {
           "type": "integer",
@@ -499,6 +498,12 @@
           "type": "string"
         },
         "description": {
+          "type": "string"
+        },
+        "currencyID": {
+          "type": "string"
+        },
+        "categoryID": {
           "type": "string"
         },
         "params": {

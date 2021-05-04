@@ -2,19 +2,18 @@ package main
 
 import (
 	"context"
-	"flag"
 	"fmt"
 	"os"
 
 	"net"
 	"net/http"
 
+	"gitlab.com/cadaverine/pim-service/config"
 	gw "gitlab.com/cadaverine/pim-service/gen/pim-service"
 	"gitlab.com/cadaverine/pim-service/helpers/db"
 	"gitlab.com/cadaverine/pim-service/service"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 
 	"golang.org/x/sync/errgroup"
@@ -24,25 +23,20 @@ import (
 	log "gopkg.in/inconshreveable/log15.v2"
 )
 
-var (
-	host     = pflag.String("host", "localhost", "host of the service")
-	grpcPort = pflag.String("grpc_port", ":9090", "grpc port")
-	httpPort = pflag.String("http_port", ":7070", "http port")
-	network  = pflag.String("network", "tcp", `one of "tcp" or "unix". Must be consistent to -endpoint`)
-	dbHost   = pflag.String("db_host", "localhost", "")
-	dbPort   = pflag.String("db_port", "5432", "")
-	dbUser   = pflag.String("db_user", "postgres", "")
-	dbName   = pflag.String("db_name", "pim_db", "")
-	dbPass   = pflag.String("db_pass", "postgres", "")
-	dbMock   = pflag.Bool("db_mock", false, "use db mock")
-)
-
 func init() {
-	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
-	pflag.Parse()
 	viper.AutomaticEnv()
 
-	pflag.PrintDefaults()
+	viper.SetDefault(config.Host, "localhost")
+	viper.SetDefault(config.GrpcPort, 9090)
+	viper.SetDefault(config.HttpPort, 7070)
+	viper.SetDefault(config.DbHost, "localhost")
+	viper.SetDefault(config.DbPort, "5432")
+	viper.SetDefault(config.DbUser, "postgres")
+	viper.SetDefault(config.DbName, "pim_db")
+	viper.SetDefault(config.DbPass, "postgres")
+	viper.SetDefault(config.DbMock, false)
+
+	viper.AutomaticEnv()
 }
 
 func main() {
@@ -56,12 +50,12 @@ func run() error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	dbAdp, err := db.New(ctx, *dbMock, db.Conf{
-		Host: *dbHost,
-		Port: *dbPort,
-		User: *dbUser,
-		Pass: *dbPass,
-		Name: *dbName,
+	dbAdp, err := db.New(ctx, viper.GetBool(config.DbMock), db.Conf{
+		Host: viper.GetString(config.DbHost),
+		Port: viper.GetString(config.DbPort),
+		User: viper.GetString(config.DbUser),
+		Pass: viper.GetString(config.DbPass),
+		Name: viper.GetString(config.DbName),
 	})
 	if err != nil {
 		return err
@@ -69,7 +63,9 @@ func run() error {
 
 	svc := service.NewPimService(dbAdp)
 
-	lis, err := net.Listen(*network, *grpcPort)
+	grpcPort := viper.GetInt(config.GrpcPort)
+
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%v", grpcPort))
 	if err != nil {
 		return err
 	}
@@ -100,17 +96,19 @@ func run() error {
 
 	httpMux := http.NewServeMux()
 	httpMux.Handle("/", gwMux)
-	httpMux.Handle("/swagger",
-		http.StripPrefix("/swagger",
+	httpMux.Handle("/swagger-ui/",
+		http.StripPrefix("/swagger-ui/",
 			http.FileServer(http.Dir("swagger-ui/dist")),
 		),
 	)
 
+	httpPort := viper.GetInt(config.HttpPort)
+
 	group.Go(func() error {
-		return http.ListenAndServe(*httpPort, httpMux)
+		return http.ListenAndServe(fmt.Sprintf(":%v", httpPort), httpMux)
 	})
 
-	log.Info(fmt.Sprintf("server listening on '%s%s'", *host, *httpPort))
+	log.Info(fmt.Sprintf("server listening on ':%v'", httpPort))
 
 	return group.Wait()
 }

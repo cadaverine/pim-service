@@ -8,7 +8,7 @@ import (
 	"gitlab.com/cadaverine/pim-service/models"
 )
 
-// GetAllCategoriesByShop ...
+// GetAllCategoriesByShop получить категории для конкретного магазина
 func (s *PimService) GetAllCategoriesByShop(ctx context.Context, req *gen.ShopID) (*gen.CategoriesTrees, error) {
 	categories, err := s.getAllCategoriesFlat(ctx, int(req.GetShopID()))
 	if err != nil {
@@ -20,6 +20,7 @@ func (s *PimService) GetAllCategoriesByShop(ctx context.Context, req *gen.ShopID
 	}, nil
 }
 
+// repackCategoriesToProto перепаковываем плоский список моделей в дерево структур категорий
 func repackCategoriesToProto(src []*models.Category) []*gen.Category {
 	roots := make([]*gen.Category, 0)
 	itemsMap := make(map[int]*gen.Category)
@@ -49,6 +50,7 @@ func repackCategoriesToProto(src []*models.Category) []*gen.Category {
 	return roots
 }
 
+// getAllCategoriesFlat получить плоский список моделей
 func (s *PimService) getAllCategoriesFlat(ctx context.Context, shopID int) ([]*models.Category, error) {
 	const query = `
 		select item_id as id, parent_id, name as title

@@ -38,6 +38,9 @@ func getCatalogFromRequest(req *http.Request) (*models.Catalog, error) {
 	defer file.Close()
 
 	bytes, err := ioutil.ReadAll(file)
+	if err != nil {
+		return nil, err
+	}
 
 	var cg models.Catalog
 

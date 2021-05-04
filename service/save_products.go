@@ -38,10 +38,9 @@ func (s *PimService) addProduct(ctx context.Context, tx *sqlx.Tx, shopID int, of
 			url,
 			price,
 			currency_code,
-			category_id,
 			vendor,
 			description
-		) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) on conflict (shop_id, item_id) do
+		) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) on conflict (shop_id, item_id) do
 		update set
 			item_id = excluded.item_id,
 			shop_id = excluded.shop_id,
@@ -51,7 +50,6 @@ func (s *PimService) addProduct(ctx context.Context, tx *sqlx.Tx, shopID int, of
 			url = excluded.url,
 			price = excluded.price,
 			currency_code = excluded.currency_code,
-			category_id = excluded.category_id,
 			vendor = excluded.vendor,
 			description = excluded.description,
 			deleted_at = null
@@ -72,7 +70,6 @@ func (s *PimService) addProduct(ctx context.Context, tx *sqlx.Tx, shopID int, of
 			offer.URL,
 			price,
 			offer.CurrencyID,
-			offer.CategoryID,
 			offer.Vendor,
 			offer.Description,
 		)
@@ -124,10 +121,46 @@ func (s *PimService) addProductAttributes(ctx context.Context, tx *sqlx.Tx, prod
 	})
 }
 
+func (s *PimService) addProductCategory(ctx context.Context, tx *sqlx.Tx, productID, categoryID int) error {
+	const query = `
+		insert into product_information.products_categories (product_id, category_id)
+		values ($1, $2);
+	`
+
+	return s.db.InTx(ctx, tx, func(tx *sqlx.Tx) error {
+		_, err := tx.Exec(query, productID, categoryID)
+		return err
+	})
+}
+
+func (s *PimService) getCategoryID(ctx context.Context, tx *sqlx.Tx, shopID int, categoryItemID string) (int, error) {
+	const query = `
+		select id
+		from product_information.categories c
+		where shop_id = $1 and item_id = $2
+	`
+
+	var id int
+
+	return id, s.db.InTx(ctx, tx, func(tx *sqlx.Tx) error {
+		return tx.Get(&id, query, shopID, categoryItemID)
+	})
+}
+
 func (s *PimService) addProducts(ctx context.Context, tx *sqlx.Tx, shopID int, offers []models.Offer) error {
 	return s.db.InTx(ctx, tx, func(tx *sqlx.Tx) error {
 		for _, offer := range offers {
 			productID, err := s.addProduct(ctx, tx, shopID, offer)
+			if err != nil {
+				return err
+			}
+
+			categoryID, err := s.getCategoryID(ctx, tx, shopID, offer.CategoryID)
+			if err != nil {
+				return err
+			}
+
+			err = s.addProductCategory(ctx, tx, productID, categoryID)
 			if err != nil {
 				return err
 			}

@@ -23,6 +23,7 @@ func (s *PimService) SearchProducts(ctx context.Context, req *gen.SearchRequest)
 	searchTerm := req.GetSearchTerm()
 
 	available := req.GetFilters().GetAvailable()
+	categoriesIDs := req.GetFilters().GetCategoriesIDs()
 
 	var isAvailable sql.NullBool
 	if available != nil {
@@ -42,7 +43,7 @@ func (s *PimService) SearchProducts(ctx context.Context, req *gen.SearchRequest)
 	var offers []models.Offer
 
 	err = s.db.InTx(ctx, nil, func(tx *sqlx.Tx) error {
-		offers, err = s.searchOffers(ctx, tx, shopID, searchTerm, isAvailable, limit, offset)
+		offers, err = s.searchOffers(ctx, tx, shopID, searchTerm, categoriesIDs, isAvailable, limit, offset)
 		if err != nil {
 			return err
 		}
@@ -119,33 +120,48 @@ func repackOfferToProto(src models.Offer) *gen.Product {
 		Price:       int32(price),
 		Vendor:      src.Vendor,
 		Description: src.Description,
+		CategoryID:  src.CategoryID,
+		CurrencyID:  src.CurrencyID,
 		Params:      repackParamsToProto(src.Param),
 	}
 }
 
-func (s *PimService) searchOffers(ctx context.Context, tx *sqlx.Tx, shopID int, searchTerm string, isVailable sql.NullBool, limit, offset int) ([]models.Offer, error) {
+func (s *PimService) searchOffers(ctx context.Context, tx *sqlx.Tx, shopID int, searchTerm string, categoriesIDs []int32, isAvailable sql.NullBool, limit, offset int) ([]models.Offer, error) {
 	const query = `
+		with recursive categories_cte as (
+			select item_id, id
+			from product_information.categories c
+			where
+				shop_id = $1 and
+				deleted_at is null and
+				(array_length($2::int[], 1) is null or item_id = any($2::int[]))
+
+			union
+
+			select c.item_id, c.id
+			from product_information.categories c
+			join categories_cte cte on cte.id = c.parent_id
+			where shop_id = $1 and deleted_at is null
+		)
 		select
-			id, item_id, shop_id, name,
-			available, type, url, price,
-			currency_code, category_id,
-			vendor, description
-		from product_information.products,
-			to_tsvector('russian', name) as src,
-			plainto_tsquery('russian', $2) as query
+			product.id, product.item_id, product.shop_id, product.name,
+			product.available, product.type, product.url, product.price,
+			product.currency_code, product.vendor, product.description
+		from product_information.products product
+		join product_information.products_categories pc on pc.product_id = product.id
+		join categories_cte category on category.id = pc.category_id
 		where
 			shop_id = $1 and deleted_at is null and
-			($3::bool is null or available = $3) and
-			src @@ query
-		order by ts_rank(src, query) desc
-		limit $4
-		offset $5;
+			($4::bool is null or available = $4)
+		order by name <-> $3
+		limit $5
+		offset $6;
 	`
 
 	var offers []models.Offer
 
 	err := s.db.InTx(ctx, nil, func(tx *sqlx.Tx) error {
-		rows, err := tx.Query(query, shopID, searchTerm, isVailable, limit, offset)
+		rows, err := tx.Query(query, shopID, pq.Int32Array(categoriesIDs), searchTerm, isAvailable, limit, offset)
 		if err != nil {
 			return err
 		}
@@ -164,7 +180,6 @@ func (s *PimService) searchOffers(ctx context.Context, tx *sqlx.Tx, shopID int, 
 				&offer.URL,
 				&offer.Price,
 				&offer.CurrencyID,
-				&offer.CategoryID,
 				&offer.Vendor,
 				&offer.Description,
 			)

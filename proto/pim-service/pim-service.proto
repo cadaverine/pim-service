@@ -122,7 +122,7 @@ message ScrollDescriptor {
 
 message Product {
     int32 ID = 1;
-    int32 itemID = 2;
+    string itemID = 2;
     int32 shopID = 3;
     string name = 4;
     bool available = 5;
@@ -131,13 +131,15 @@ message Product {
     int32 price = 8;
     string vendor = 9;
     string description = 10;
+    string currencyID = 11;
+    string categoryID = 12;
 
     message Param {
         string name = 1;
         string type = 2;
         google.protobuf.Struct value = 3;
     }
-    repeated Param params = 11;
+    repeated Param params = 13;
 }
 
 message Products {
