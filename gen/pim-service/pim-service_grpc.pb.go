@@ -19,15 +19,25 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PimServiceClient interface {
+	// нечеткий поиск по продуктам магазина с фильтрами
 	SearchProducts(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (*Products, error)
+	// получить все категории товаров магазина
 	GetAllCategoriesByShop(ctx context.Context, in *ShopID, opts ...grpc.CallOption) (*CategoriesTrees, error)
+	// создать товар для магазина
 	CreateProduct(ctx context.Context, in *Product, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	GetProduct(ctx context.Context, in *IDs, opts ...grpc.CallOption) (*Product, error)
+	// получить товар магазина по id
+	GetProduct(ctx context.Context, in *ProductIDs, opts ...grpc.CallOption) (*Product, error)
+	// обновить товар
 	UpdateProduct(ctx context.Context, in *Product, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	DeleteProduct(ctx context.Context, in *IDs, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// удалить товар
+	DeleteProduct(ctx context.Context, in *ProductIDs, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// создать категорию товаров для магазина
 	CreateCategory(ctx context.Context, in *Category, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// получить категорию по id
 	GetCategory(ctx context.Context, in *IDs, opts ...grpc.CallOption) (*Category, error)
+	// обновить категорию товаров
 	UpdateCategory(ctx context.Context, in *Category, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// удалить категорию товаров
 	DeleteCategory(ctx context.Context, in *IDs, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
@@ -66,7 +76,7 @@ func (c *pimServiceClient) CreateProduct(ctx context.Context, in *Product, opts 
 	return out, nil
 }
 
-func (c *pimServiceClient) GetProduct(ctx context.Context, in *IDs, opts ...grpc.CallOption) (*Product, error) {
+func (c *pimServiceClient) GetProduct(ctx context.Context, in *ProductIDs, opts ...grpc.CallOption) (*Product, error) {
 	out := new(Product)
 	err := c.cc.Invoke(ctx, "/pim_service.PimService/GetProduct", in, out, opts...)
 	if err != nil {
@@ -84,7 +94,7 @@ func (c *pimServiceClient) UpdateProduct(ctx context.Context, in *Product, opts 
 	return out, nil
 }
 
-func (c *pimServiceClient) DeleteProduct(ctx context.Context, in *IDs, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *pimServiceClient) DeleteProduct(ctx context.Context, in *ProductIDs, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/pim_service.PimService/DeleteProduct", in, out, opts...)
 	if err != nil {
@@ -133,15 +143,25 @@ func (c *pimServiceClient) DeleteCategory(ctx context.Context, in *IDs, opts ...
 // All implementations must embed UnimplementedPimServiceServer
 // for forward compatibility
 type PimServiceServer interface {
+	// нечеткий поиск по продуктам магазина с фильтрами
 	SearchProducts(context.Context, *SearchRequest) (*Products, error)
+	// получить все категории товаров магазина
 	GetAllCategoriesByShop(context.Context, *ShopID) (*CategoriesTrees, error)
+	// создать товар для магазина
 	CreateProduct(context.Context, *Product) (*emptypb.Empty, error)
-	GetProduct(context.Context, *IDs) (*Product, error)
+	// получить товар магазина по id
+	GetProduct(context.Context, *ProductIDs) (*Product, error)
+	// обновить товар
 	UpdateProduct(context.Context, *Product) (*emptypb.Empty, error)
-	DeleteProduct(context.Context, *IDs) (*emptypb.Empty, error)
+	// удалить товар
+	DeleteProduct(context.Context, *ProductIDs) (*emptypb.Empty, error)
+	// создать категорию товаров для магазина
 	CreateCategory(context.Context, *Category) (*emptypb.Empty, error)
+	// получить категорию по id
 	GetCategory(context.Context, *IDs) (*Category, error)
+	// обновить категорию товаров
 	UpdateCategory(context.Context, *Category) (*emptypb.Empty, error)
+	// удалить категорию товаров
 	DeleteCategory(context.Context, *IDs) (*emptypb.Empty, error)
 	mustEmbedUnimplementedPimServiceServer()
 }
@@ -159,13 +179,13 @@ func (UnimplementedPimServiceServer) GetAllCategoriesByShop(context.Context, *Sh
 func (UnimplementedPimServiceServer) CreateProduct(context.Context, *Product) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateProduct not implemented")
 }
-func (UnimplementedPimServiceServer) GetProduct(context.Context, *IDs) (*Product, error) {
+func (UnimplementedPimServiceServer) GetProduct(context.Context, *ProductIDs) (*Product, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProduct not implemented")
 }
 func (UnimplementedPimServiceServer) UpdateProduct(context.Context, *Product) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateProduct not implemented")
 }
-func (UnimplementedPimServiceServer) DeleteProduct(context.Context, *IDs) (*emptypb.Empty, error) {
+func (UnimplementedPimServiceServer) DeleteProduct(context.Context, *ProductIDs) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteProduct not implemented")
 }
 func (UnimplementedPimServiceServer) CreateCategory(context.Context, *Category) (*emptypb.Empty, error) {
@@ -248,7 +268,7 @@ func _PimService_CreateProduct_Handler(srv interface{}, ctx context.Context, dec
 }
 
 func _PimService_GetProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(IDs)
+	in := new(ProductIDs)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -260,7 +280,7 @@ func _PimService_GetProduct_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: "/pim_service.PimService/GetProduct",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PimServiceServer).GetProduct(ctx, req.(*IDs))
+		return srv.(PimServiceServer).GetProduct(ctx, req.(*ProductIDs))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -284,7 +304,7 @@ func _PimService_UpdateProduct_Handler(srv interface{}, ctx context.Context, dec
 }
 
 func _PimService_DeleteProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(IDs)
+	in := new(ProductIDs)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -296,7 +316,7 @@ func _PimService_DeleteProduct_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: "/pim_service.PimService/DeleteProduct",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PimServiceServer).DeleteProduct(ctx, req.(*IDs))
+		return srv.(PimServiceServer).DeleteProduct(ctx, req.(*ProductIDs))
 	}
 	return interceptor(ctx, in, info, handler)
 }

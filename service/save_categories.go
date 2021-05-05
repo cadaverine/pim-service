@@ -44,8 +44,7 @@ func (s *PimService) addCategory(ctx context.Context, tx *sqlx.Tx, shopID int, c
 			shop_id = excluded.shop_id,
 			item_id = excluded.item_id,
 			parent_id = excluded.parent_id,
-			name = excluded.name,
-			deleted_at = null;
+			name = excluded.name
 	`
 
 	return s.db.InTx(ctx, tx, func(t *sqlx.Tx) error {
@@ -61,8 +60,7 @@ func (s *PimService) addCategory(ctx context.Context, tx *sqlx.Tx, shopID int, c
 
 func (s *PimService) deleteCategories(ctx context.Context, tx *sqlx.Tx, shopID int) error {
 	const query = `
-		update product_information.categories
-		set deleted_at = now()
+		delete from product_information.categories
 		where shop_id = $1
 	`
 

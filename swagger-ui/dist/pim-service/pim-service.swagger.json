@@ -18,6 +18,7 @@
   "paths": {
     "/shop/{shopID}/categories": {
       "get": {
+        "summary": "получить все категории товаров магазина",
         "operationId": "PimService_GetAllCategoriesByShop",
         "responses": {
           "200": {
@@ -49,6 +50,7 @@
     },
     "/shop/{shopID}/category": {
       "post": {
+        "summary": "создать категорию товаров для магазина",
         "operationId": "PimService_CreateCategory",
         "responses": {
           "200": {
@@ -88,6 +90,7 @@
     },
     "/shop/{shopID}/category/{ID}": {
       "get": {
+        "summary": "получить категорию по id",
         "operationId": "PimService_GetCategory",
         "responses": {
           "200": {
@@ -124,6 +127,7 @@
         ]
       },
       "delete": {
+        "summary": "удалить категорию товаров",
         "operationId": "PimService_DeleteCategory",
         "responses": {
           "200": {
@@ -160,6 +164,7 @@
         ]
       },
       "put": {
+        "summary": "обновить категорию товаров",
         "operationId": "PimService_UpdateCategory",
         "responses": {
           "200": {
@@ -206,6 +211,7 @@
     },
     "/shop/{shopID}/get-products": {
       "post": {
+        "summary": "нечеткий поиск по продуктам магазина с фильтрами",
         "operationId": "PimService_SearchProducts",
         "responses": {
           "200": {
@@ -245,6 +251,7 @@
     },
     "/shop/{shopID}/product": {
       "post": {
+        "summary": "создать товар для магазина",
         "operationId": "PimService_CreateProduct",
         "responses": {
           "200": {
@@ -284,6 +291,7 @@
     },
     "/shop/{shopID}/product/{ID}": {
       "get": {
+        "summary": "получить товар магазина по id",
         "operationId": "PimService_GetProduct",
         "responses": {
           "200": {
@@ -311,8 +319,7 @@
             "name": "ID",
             "in": "path",
             "required": true,
-            "type": "integer",
-            "format": "int32"
+            "type": "string"
           }
         ],
         "tags": [
@@ -320,6 +327,7 @@
         ]
       },
       "delete": {
+        "summary": "удалить товар",
         "operationId": "PimService_DeleteProduct",
         "responses": {
           "200": {
@@ -347,8 +355,7 @@
             "name": "ID",
             "in": "path",
             "required": true,
-            "type": "integer",
-            "format": "int32"
+            "type": "string"
           }
         ],
         "tags": [
@@ -356,6 +363,7 @@
         ]
       },
       "put": {
+        "summary": "обновить товар",
         "operationId": "PimService_UpdateProduct",
         "responses": {
           "200": {
@@ -446,6 +454,10 @@
       "type": "object",
       "properties": {
         "ID": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "ParentID": {
           "type": "integer",
           "format": "int32"
         },
@@ -553,6 +565,9 @@
         },
         "searchTerm": {
           "type": "string"
+        },
+        "withParams": {
+          "type": "boolean"
         },
         "meta": {
           "$ref": "#/definitions/pim_serviceScrollDescriptor"

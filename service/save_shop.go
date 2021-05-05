@@ -16,8 +16,7 @@ func (s *PimService) SaveShop(ctx context.Context, shop models.Shop) (int, error
 			name = excluded.name,
 			company = excluded.company,
 			url = excluded.url,
-			platform = excluded.platform,
-			deleted_at = null
+			platform = excluded.platform
 		returning id;
 	`
 

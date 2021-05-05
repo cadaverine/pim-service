@@ -21,12 +21,7 @@ func (s *PimService) SaveCatalog(ctx context.Context, cg *models.Catalog) error 
 				return err
 			}
 
-			err = s.SaveProducts(ctx, tx, shopID, shop.Offers.Offers)
-			if err != nil {
-				return err
-			}
-
-			return nil
+			return s.SaveProducts(ctx, tx, shopID, shop.Offers.Offers)
 		})
 		if err != nil {
 			return err

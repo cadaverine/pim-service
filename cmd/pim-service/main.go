@@ -24,8 +24,6 @@ import (
 )
 
 func init() {
-	viper.AutomaticEnv()
-
 	viper.SetDefault(config.Host, "localhost")
 	viper.SetDefault(config.GrpcPort, 9090)
 	viper.SetDefault(config.HttpPort, 7070)

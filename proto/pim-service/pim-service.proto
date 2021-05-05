@@ -10,6 +10,7 @@ import "google/protobuf/empty.proto";
 import "google/protobuf/struct.proto";
 
 service PimService {
+    // нечеткий поиск по продуктам магазина с фильтрами
     rpc SearchProducts(SearchRequest) returns (Products) {
         option (google.api.http) = {
             post: "/shop/{shopID}/get-products"
@@ -17,6 +18,7 @@ service PimService {
         };
     }
 
+    // получить все категории товаров магазина
     rpc GetAllCategoriesByShop(ShopID) returns (CategoriesTrees) {
         option (google.api.http) = {
             get: "/shop/{shopID}/categories"
@@ -27,6 +29,7 @@ service PimService {
     // -- Products CRUD --
     // -------------------
 
+    // создать товар для магазина
     rpc CreateProduct(Product) returns (google.protobuf.Empty) {
         option (google.api.http) = {
             post: "/shop/{shopID}/product"
@@ -34,12 +37,14 @@ service PimService {
         };
     }
 
-    rpc GetProduct(IDs) returns (Product) {
+    // получить товар магазина по id
+    rpc GetProduct(ProductIDs) returns (Product) {
         option (google.api.http) = {
             get: "/shop/{shopID}/product/{ID}"
         };
     }
 
+    // обновить товар
     rpc UpdateProduct(Product) returns (google.protobuf.Empty) {
         option (google.api.http) = {
             put: "/shop/{shopID}/product/{ID}"
@@ -47,7 +52,8 @@ service PimService {
         };
     }
 
-    rpc DeleteProduct(IDs) returns (google.protobuf.Empty) {
+    // удалить товар
+    rpc DeleteProduct(ProductIDs) returns (google.protobuf.Empty) {
         option (google.api.http) = {
             delete: "/shop/{shopID}/product/{ID}"
         };
@@ -57,6 +63,7 @@ service PimService {
     // -- Categories CRUD --
     // ---------------------
 
+    // создать категорию товаров для магазина
     rpc CreateCategory(Category) returns (google.protobuf.Empty) {
         option (google.api.http) = {
             post: "/shop/{shopID}/category"
@@ -64,12 +71,14 @@ service PimService {
         };
     }
 
+    // получить категорию по id
     rpc GetCategory(IDs) returns (Category) {
         option (google.api.http) = {
             get: "/shop/{shopID}/category/{ID}"
         };
     }
 
+    // обновить категорию товаров
     rpc UpdateCategory(Category) returns (google.protobuf.Empty) {
         option (google.api.http) = {
             put: "/shop/{shopID}/category/{ID}"
@@ -77,6 +86,7 @@ service PimService {
         };
     }
 
+    // удалить категорию товаров
     rpc DeleteCategory(IDs) returns (google.protobuf.Empty) {
         option (google.api.http) = {
             delete: "/shop/{shopID}/category/{ID}"
@@ -93,11 +103,17 @@ message IDs {
     int32 shopID = 2;
 }
 
+message ProductIDs {
+    string ID = 1;
+    int32 shopID = 2;
+}
+
 message Category {
     int32 ID = 1;
-    int32 shopID = 2;
-    string name = 3;
-    repeated Category children = 4;
+    int32 ParentID = 2;
+    int32 shopID = 3;
+    string name = 4;
+    repeated Category children = 5;
 }
 
 message CategoriesTrees {
@@ -112,7 +128,8 @@ message SearchRequest {
     int32 shopID = 1;
     Filters filters = 2;
     string searchTerm = 3;
-    ScrollDescriptor meta = 4;
+    bool withParams = 4;
+    ScrollDescriptor meta = 5;
 }
 
 message ScrollDescriptor {

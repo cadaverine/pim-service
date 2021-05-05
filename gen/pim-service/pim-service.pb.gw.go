@@ -220,7 +220,7 @@ func local_request_PimService_CreateProduct_0(ctx context.Context, marshaler run
 }
 
 func request_PimService_GetProduct_0(ctx context.Context, marshaler runtime.Marshaler, client PimServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq IDs
+	var protoReq ProductIDs
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -245,7 +245,7 @@ func request_PimService_GetProduct_0(ctx context.Context, marshaler runtime.Mars
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "ID")
 	}
 
-	protoReq.ID, err = runtime.Int32(val)
+	protoReq.ID, err = runtime.String(val)
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "ID", err)
 	}
@@ -256,7 +256,7 @@ func request_PimService_GetProduct_0(ctx context.Context, marshaler runtime.Mars
 }
 
 func local_request_PimService_GetProduct_0(ctx context.Context, marshaler runtime.Marshaler, server PimServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq IDs
+	var protoReq ProductIDs
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -281,7 +281,7 @@ func local_request_PimService_GetProduct_0(ctx context.Context, marshaler runtim
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "ID")
 	}
 
-	protoReq.ID, err = runtime.Int32(val)
+	protoReq.ID, err = runtime.String(val)
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "ID", err)
 	}
@@ -380,7 +380,7 @@ func local_request_PimService_UpdateProduct_0(ctx context.Context, marshaler run
 }
 
 func request_PimService_DeleteProduct_0(ctx context.Context, marshaler runtime.Marshaler, client PimServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq IDs
+	var protoReq ProductIDs
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -405,7 +405,7 @@ func request_PimService_DeleteProduct_0(ctx context.Context, marshaler runtime.M
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "ID")
 	}
 
-	protoReq.ID, err = runtime.Int32(val)
+	protoReq.ID, err = runtime.String(val)
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "ID", err)
 	}
@@ -416,7 +416,7 @@ func request_PimService_DeleteProduct_0(ctx context.Context, marshaler runtime.M
 }
 
 func local_request_PimService_DeleteProduct_0(ctx context.Context, marshaler runtime.Marshaler, server PimServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq IDs
+	var protoReq ProductIDs
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -441,7 +441,7 @@ func local_request_PimService_DeleteProduct_0(ctx context.Context, marshaler run
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "ID")
 	}
 
-	protoReq.ID, err = runtime.Int32(val)
+	protoReq.ID, err = runtime.String(val)
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "ID", err)
 	}

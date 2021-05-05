@@ -51,8 +51,7 @@ func (s *PimService) addProduct(ctx context.Context, tx *sqlx.Tx, shopID int, of
 			price = excluded.price,
 			currency_code = excluded.currency_code,
 			vendor = excluded.vendor,
-			description = excluded.description,
-			deleted_at = null
+			description = excluded.description
 		returning id;
 	`
 
@@ -102,15 +101,20 @@ func (s *PimService) addProductAttributes(ctx context.Context, tx *sqlx.Tx, prod
 
 	return s.db.InTx(ctx, tx, func(tx *sqlx.Tx) error {
 		for i := range params {
+			paramType := params[i].Type
+			if paramType == "" {
+				paramType = defaultType
+			}
+
 			value, _ := json.Marshal(map[string]interface{}{
-				"type":  defaultType,
+				"type":  paramType,
 				"value": params[i].Value,
 			})
 
 			_, err := tx.Exec(query,
 				productID,
 				params[i].Name,
-				defaultType,
+				paramType,
 				value,
 			)
 			if err != nil {
@@ -177,8 +181,7 @@ func (s *PimService) addProducts(ctx context.Context, tx *sqlx.Tx, shopID int, o
 
 func (s *PimService) deleteProducts(ctx context.Context, tx *sqlx.Tx, shopID int) error {
 	const query = `
-		update product_information.products
-		set deleted_at = now()
+		delete from product_information.products
 		where shop_id = $1;
 	`
 

@@ -21,6 +21,7 @@ const (
 func (s *PimService) SearchProducts(ctx context.Context, req *gen.SearchRequest) (*gen.Products, error) {
 	shopID := int(req.GetShopID())
 	searchTerm := req.GetSearchTerm()
+	withParams := req.GetWithParams()
 
 	available := req.GetFilters().GetAvailable()
 	categoriesIDs := req.GetFilters().GetCategoriesIDs()
@@ -53,13 +54,15 @@ func (s *PimService) SearchProducts(ctx context.Context, req *gen.SearchRequest)
 			offersIDs[i] = offers[i].ID
 		}
 
-		offersMap, err := s.getOffersParamsByIDs(ctx, tx, offersIDs)
-		if err != nil {
-			return err
-		}
+		if withParams {
+			offersMap, err := s.getOffersParamsByIDs(ctx, tx, offersIDs)
+			if err != nil {
+				return err
+			}
 
-		for i := range offers {
-			offers[i].Param = offersMap[offers[i].ID]
+			for i := range offers {
+				offers[i].Param = offersMap[offers[i].ID]
+			}
 		}
 
 		return nil
@@ -113,6 +116,7 @@ func repackOfferToProto(src models.Offer) *gen.Product {
 
 	return &gen.Product{
 		ID:          int32(src.ID),
+		ItemID:      src.ItemID,
 		Name:        src.Name,
 		Available:   src.Available,
 		Type:        src.Type,
@@ -133,7 +137,6 @@ func (s *PimService) searchOffers(ctx context.Context, tx *sqlx.Tx, shopID int, 
 			from product_information.categories c
 			where
 				shop_id = $1 and
-				deleted_at is null and
 				(array_length($2::int[], 1) is null or item_id = any($2::int[]))
 
 			union
@@ -141,7 +144,7 @@ func (s *PimService) searchOffers(ctx context.Context, tx *sqlx.Tx, shopID int, 
 			select c.item_id, c.id
 			from product_information.categories c
 			join categories_cte cte on cte.id = c.parent_id
-			where shop_id = $1 and deleted_at is null
+			where shop_id = $1
 		)
 		select
 			product.id, product.item_id, product.shop_id, product.name,
@@ -150,9 +153,7 @@ func (s *PimService) searchOffers(ctx context.Context, tx *sqlx.Tx, shopID int, 
 		from product_information.products product
 		join product_information.products_categories pc on pc.product_id = product.id
 		join categories_cte category on category.id = pc.category_id
-		where
-			shop_id = $1 and deleted_at is null and
-			($4::bool is null or available = $4)
+		where shop_id = $1 and ($4::bool is null or available = $4)
 		order by name <-> $3
 		limit $5
 		offset $6;
