@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"net"
 	"net/http"
@@ -12,6 +11,9 @@ import (
 	gw "gitlab.com/cadaverine/pim-service/gen/pim-service"
 	"gitlab.com/cadaverine/pim-service/helpers/db"
 	"gitlab.com/cadaverine/pim-service/service"
+	"go.uber.org/zap"
+
+	"log"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/spf13/viper"
@@ -19,9 +21,9 @@ import (
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/encoding/protojson"
-
-	log "gopkg.in/inconshreveable/log15.v2"
 )
+
+var logger *zap.SugaredLogger
 
 func init() {
 	viper.SetDefault(config.Host, "localhost")
@@ -35,18 +37,32 @@ func init() {
 	viper.SetDefault(config.DbMock, false)
 
 	viper.AutomaticEnv()
+
+	zapLogger, err := zap.NewProduction()
+	if err != nil {
+		log.Fatalf("can't initialize zap logger: %v", err)
+	}
+
+	logger = zapLogger.Sugar()
 }
 
 func main() {
 	if err := run(); err != nil {
-		log.Crit("error", err)
-		os.Exit(1)
+		logger.Fatalf("error: %v", err)
 	}
 }
 
 func run() error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+
+	logger.Info(db.Conf{
+		Host: viper.GetString(config.DbHost),
+		Port: viper.GetString(config.DbPort),
+		User: viper.GetString(config.DbUser),
+		Pass: viper.GetString(config.DbPass),
+		Name: viper.GetString(config.DbName),
+	})
 
 	dbAdp, err := db.New(ctx, viper.GetBool(config.DbMock), db.Conf{
 		Host: viper.GetString(config.DbHost),
@@ -106,7 +122,7 @@ func run() error {
 		return http.ListenAndServe(fmt.Sprintf(":%v", httpPort), httpMux)
 	})
 
-	log.Info(fmt.Sprintf("server listening on ':%v'", httpPort))
+	logger.Info(fmt.Sprintf("server listening on ':%v'", httpPort))
 
 	return group.Wait()
 }
