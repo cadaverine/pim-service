@@ -56,14 +56,6 @@ func run() error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	logger.Info(db.Conf{
-		Host: viper.GetString(config.DbHost),
-		Port: viper.GetString(config.DbPort),
-		User: viper.GetString(config.DbUser),
-		Pass: viper.GetString(config.DbPass),
-		Name: viper.GetString(config.DbName),
-	})
-
 	dbAdp, err := db.New(ctx, viper.GetBool(config.DbMock), db.Conf{
 		Host: viper.GetString(config.DbHost),
 		Port: viper.GetString(config.DbPort),

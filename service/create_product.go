@@ -82,7 +82,6 @@ func repackProductFromProto(src *gen.Product) *models.Offer {
 		URL:         src.Url,
 		Price:       string(src.Price),
 		CurrencyID:  src.CurrencyID,
-		CategoryID:  src.CategoryID,
 		Name:        src.Name,
 		Vendor:      src.Vendor,
 		Description: src.Description,

@@ -124,7 +124,6 @@ func repackOfferToProto(src models.Offer) *gen.Product {
 		Price:       int32(price),
 		Vendor:      src.Vendor,
 		Description: src.Description,
-		CategoryID:  src.CategoryID,
 		CurrencyID:  src.CurrencyID,
 		Params:      repackParamsToProto(src.Param),
 	}
