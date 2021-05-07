@@ -26,6 +26,8 @@ import (
 var logger *zap.SugaredLogger
 
 func init() {
+	viper.AutomaticEnv()
+
 	viper.SetDefault(config.Host, "localhost")
 	viper.SetDefault(config.GrpcPort, 9090)
 	viper.SetDefault(config.HttpPort, 7070)
@@ -35,8 +37,6 @@ func init() {
 	viper.SetDefault(config.DbName, "pim_db")
 	viper.SetDefault(config.DbPass, "postgres")
 	viper.SetDefault(config.DbMock, false)
-
-	viper.AutomaticEnv()
 
 	zapLogger, err := zap.NewProduction()
 	if err != nil {

@@ -95,71 +95,129 @@ service PimService {
 }
 
 message ShopID {
+    // id магазина
     int32 shopID = 1;
 }
 
 message IDs {
+    // id
     int32 ID = 1;
+    // id магазина
     int32 shopID = 2;
 }
 
+/**
+* Запрос товара
+*/
 message ProductIDs {
+    // id товара
     string ID = 1;
+     // id магазина
     int32 shopID = 2;
 }
 
+/**
+* Категория товаров
+*/
 message Category {
+    // id категории товара
     int32 ID = 1;
+    // id родительской категории (если 0 или отсутствует, то элемент корневой)
     int32 ParentID = 2;
+    // id магазина
     int32 shopID = 3;
+    // название категории
     string name = 4;
+    // дочерние категории
     repeated Category children = 5;
 }
 
+/**
+* Деревья категорий товаров
+*/
 message CategoriesTrees {
+    // список категорий товаров
     repeated Category categories = 1;
 }
 
+/**
+* Поисковый запрос
+*/
 message SearchRequest {
+    // Фильтры поиска
     message Filters {
+        // доступен ли товар
         google.protobuf.BoolValue available = 1;
+        // id категорий товаров
         repeated int32 categoriesIDs = 2;
     }
+    // id магазина
     int32 shopID = 1;
+    // фильтры поиска
     Filters filters = 2;
+    // поисковый запрос
     string searchTerm = 3;
+    // показывать ли атрибуты товаров
     bool withParams = 4;
+    // опции постраничной выдачи
     ScrollDescriptor meta = 5;
 }
 
+/**
+* Опции постраничной выдачи
+*/
 message ScrollDescriptor {
+    // максимальное количество элементов в выдаче
     int32 limit = 1;
+    // смещение (страница) выдачи
     int32 offset = 2;
 }
 
+/**
+* Товар
+*/
 message Product {
+    // сквозной id товара
     int32 ID = 1;
+    // id товара в магазине
     string itemID = 2;
+    // id магазина
     int32 shopID = 3;
+    // наименование товара
     string name = 4;
+    // доступен ли товар
     bool available = 5;
+    // тип поставки
     string type = 6;
+    // ссылка на товар в магазине
     string url = 7;
+    // цена
     int32 price = 8;
+    // поставщик
     string vendor = 9;
+    // описание товара
     string description = 10;
+    // id валюты
     string currencyID = 11;
-    string categoryID = 12;
-
+    // Атрибут товара
     message Param {
+        /// имя атрибута
         string name = 1;
+        /// тип атрибута
         string type = 2;
+        /// значение атрибута
         google.protobuf.Struct value = 3;
     }
+    // атрибуты товара
     repeated Param params = 13;
 }
 
+/**
+* Cписок товаров
+*/
 message Products {
+    // список товаров
     repeated Product products = 1;
+    // опции постраничной выдачи
     ScrollDescriptor meta = 2;
 }

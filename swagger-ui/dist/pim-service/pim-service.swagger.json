@@ -37,6 +37,7 @@
         "parameters": [
           {
             "name": "shopID",
+            "description": "id магазина",
             "in": "path",
             "required": true,
             "type": "integer",
@@ -69,6 +70,7 @@
         "parameters": [
           {
             "name": "shopID",
+            "description": "id магазина",
             "in": "path",
             "required": true,
             "type": "integer",
@@ -109,6 +111,7 @@
         "parameters": [
           {
             "name": "shopID",
+            "description": "id магазина",
             "in": "path",
             "required": true,
             "type": "integer",
@@ -116,6 +119,7 @@
           },
           {
             "name": "ID",
+            "description": "id",
             "in": "path",
             "required": true,
             "type": "integer",
@@ -146,6 +150,7 @@
         "parameters": [
           {
             "name": "shopID",
+            "description": "id магазина",
             "in": "path",
             "required": true,
             "type": "integer",
@@ -153,6 +158,7 @@
           },
           {
             "name": "ID",
+            "description": "id",
             "in": "path",
             "required": true,
             "type": "integer",
@@ -183,6 +189,7 @@
         "parameters": [
           {
             "name": "shopID",
+            "description": "id магазина",
             "in": "path",
             "required": true,
             "type": "integer",
@@ -190,6 +197,7 @@
           },
           {
             "name": "ID",
+            "description": "id категории товара",
             "in": "path",
             "required": true,
             "type": "integer",
@@ -230,6 +238,7 @@
         "parameters": [
           {
             "name": "shopID",
+            "description": "id магазина",
             "in": "path",
             "required": true,
             "type": "integer",
@@ -270,6 +279,7 @@
         "parameters": [
           {
             "name": "shopID",
+            "description": "id магазина",
             "in": "path",
             "required": true,
             "type": "integer",
@@ -310,6 +320,7 @@
         "parameters": [
           {
             "name": "shopID",
+            "description": "id магазина",
             "in": "path",
             "required": true,
             "type": "integer",
@@ -317,6 +328,7 @@
           },
           {
             "name": "ID",
+            "description": "id товара",
             "in": "path",
             "required": true,
             "type": "string"
@@ -346,6 +358,7 @@
         "parameters": [
           {
             "name": "shopID",
+            "description": "id магазина",
             "in": "path",
             "required": true,
             "type": "integer",
@@ -353,6 +366,7 @@
           },
           {
             "name": "ID",
+            "description": "id товара",
             "in": "path",
             "required": true,
             "type": "string"
@@ -382,6 +396,7 @@
         "parameters": [
           {
             "name": "shopID",
+            "description": "id магазина",
             "in": "path",
             "required": true,
             "type": "integer",
@@ -389,6 +404,7 @@
           },
           {
             "name": "ID",
+            "description": "сквозной id товара",
             "in": "path",
             "required": true,
             "type": "integer",
@@ -414,30 +430,37 @@
       "type": "object",
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "/ имя атрибута"
         },
         "type": {
-          "type": "string"
+          "type": "string",
+          "title": "/ тип атрибута"
         },
         "value": {
-          "type": "object"
+          "type": "object",
+          "title": "/ значение атрибута"
         }
-      }
+      },
+      "title": "Атрибут товара"
     },
     "SearchRequestFilters": {
       "type": "object",
       "properties": {
         "available": {
-          "type": "boolean"
+          "type": "boolean",
+          "title": "доступен ли товар"
         },
         "categoriesIDs": {
           "type": "array",
           "items": {
             "type": "integer",
             "format": "int32"
-          }
+          },
+          "title": "id категорий товаров"
         }
-      }
+      },
+      "title": "Фильтры поиска"
     },
     "pim_serviceCategoriesTrees": {
       "type": "object",
@@ -446,85 +469,103 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/pim_serviceCategory"
-          }
+          },
+          "title": "список категорий товаров"
         }
-      }
+      },
+      "title": "Деревья категорий товаров"
     },
     "pim_serviceCategory": {
       "type": "object",
       "properties": {
         "ID": {
           "type": "integer",
-          "format": "int32"
+          "format": "int32",
+          "title": "id категории товара"
         },
         "ParentID": {
           "type": "integer",
-          "format": "int32"
+          "format": "int32",
+          "title": "id родительской категории (если 0 или отсутствует, то элемент корневой)"
         },
         "shopID": {
           "type": "integer",
-          "format": "int32"
+          "format": "int32",
+          "title": "id магазина"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "название категории"
         },
         "children": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/pim_serviceCategory"
-          }
+          },
+          "title": "дочерние категории"
         }
-      }
+      },
+      "title": "Категория товаров"
     },
     "pim_serviceProduct": {
       "type": "object",
       "properties": {
         "ID": {
           "type": "integer",
-          "format": "int32"
+          "format": "int32",
+          "title": "сквозной id товара"
         },
         "itemID": {
-          "type": "string"
+          "type": "string",
+          "title": "id товара в магазине"
         },
         "shopID": {
           "type": "integer",
-          "format": "int32"
+          "format": "int32",
+          "title": "id магазина"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "наименование товара"
         },
         "available": {
-          "type": "boolean"
+          "type": "boolean",
+          "title": "доступен ли товар"
         },
         "type": {
-          "type": "string"
+          "type": "string",
+          "title": "тип поставки"
         },
         "url": {
-          "type": "string"
+          "type": "string",
+          "title": "ссылка на товар в магазине"
         },
         "price": {
           "type": "integer",
-          "format": "int32"
+          "format": "int32",
+          "title": "цена"
         },
         "vendor": {
-          "type": "string"
+          "type": "string",
+          "title": "поставщик"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "описание товара"
         },
         "currencyID": {
-          "type": "string"
-        },
-        "categoryID": {
-          "type": "string"
+          "type": "string",
+          "title": "id валюты"
         },
         "params": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/ProductParam"
-          }
+          },
+          "title": "атрибуты товара"
         }
-      }
+      },
+      "title": "Товар"
     },
     "pim_serviceProducts": {
       "type": "object",
@@ -533,46 +574,58 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/pim_serviceProduct"
-          }
+          },
+          "title": "список товаров"
         },
         "meta": {
-          "$ref": "#/definitions/pim_serviceScrollDescriptor"
+          "$ref": "#/definitions/pim_serviceScrollDescriptor",
+          "title": "опции постраничной выдачи"
         }
-      }
+      },
+      "title": "Cписок товаров"
     },
     "pim_serviceScrollDescriptor": {
       "type": "object",
       "properties": {
         "limit": {
           "type": "integer",
-          "format": "int32"
+          "format": "int32",
+          "title": "максимальное количество элементов в выдаче"
         },
         "offset": {
           "type": "integer",
-          "format": "int32"
+          "format": "int32",
+          "title": "смещение (страница) выдачи"
         }
-      }
+      },
+      "title": "Опции постраничной выдачи"
     },
     "pim_serviceSearchRequest": {
       "type": "object",
       "properties": {
         "shopID": {
           "type": "integer",
-          "format": "int32"
+          "format": "int32",
+          "title": "id магазина"
         },
         "filters": {
-          "$ref": "#/definitions/SearchRequestFilters"
+          "$ref": "#/definitions/SearchRequestFilters",
+          "title": "фильтры поиска"
         },
         "searchTerm": {
-          "type": "string"
+          "type": "string",
+          "title": "поисковый запрос"
         },
         "withParams": {
-          "type": "boolean"
+          "type": "boolean",
+          "title": "показывать ли атрибуты товаров"
         },
         "meta": {
-          "$ref": "#/definitions/pim_serviceScrollDescriptor"
+          "$ref": "#/definitions/pim_serviceScrollDescriptor",
+          "title": "опции постраничной выдачи"
         }
-      }
+      },
+      "title": "Поисковый запрос"
     },
     "protobufAny": {
       "type": "object",

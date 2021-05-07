@@ -29,6 +29,7 @@ type ShopID struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// id магазина
 	ShopID int32 `protobuf:"varint,1,opt,name=shopID,proto3" json:"shopID,omitempty"`
 }
 
@@ -76,7 +77,9 @@ type IDs struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ID     int32 `protobuf:"varint,1,opt,name=ID,proto3" json:"ID,omitempty"`
+	// id
+	ID int32 `protobuf:"varint,1,opt,name=ID,proto3" json:"ID,omitempty"`
+	// id магазина
 	ShopID int32 `protobuf:"varint,2,opt,name=shopID,proto3" json:"shopID,omitempty"`
 }
 
@@ -126,13 +129,17 @@ func (x *IDs) GetShopID() int32 {
 	return 0
 }
 
+//
+// Запрос товара
 type ProductIDs struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ID     string `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`
-	ShopID int32  `protobuf:"varint,2,opt,name=shopID,proto3" json:"shopID,omitempty"`
+	// id товара
+	ID string `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`
+	// id магазина
+	ShopID int32 `protobuf:"varint,2,opt,name=shopID,proto3" json:"shopID,omitempty"`
 }
 
 func (x *ProductIDs) Reset() {
@@ -181,15 +188,22 @@ func (x *ProductIDs) GetShopID() int32 {
 	return 0
 }
 
+//
+// Категория товаров
 type Category struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ID       int32       `protobuf:"varint,1,opt,name=ID,proto3" json:"ID,omitempty"`
-	ParentID int32       `protobuf:"varint,2,opt,name=ParentID,proto3" json:"ParentID,omitempty"`
-	ShopID   int32       `protobuf:"varint,3,opt,name=shopID,proto3" json:"shopID,omitempty"`
-	Name     string      `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	// id категории товара
+	ID int32 `protobuf:"varint,1,opt,name=ID,proto3" json:"ID,omitempty"`
+	// id родительской категории (если 0 или отсутствует, то элемент корневой)
+	ParentID int32 `protobuf:"varint,2,opt,name=ParentID,proto3" json:"ParentID,omitempty"`
+	// id магазина
+	ShopID int32 `protobuf:"varint,3,opt,name=shopID,proto3" json:"shopID,omitempty"`
+	// название категории
+	Name string `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	// дочерние категории
 	Children []*Category `protobuf:"bytes,5,rep,name=children,proto3" json:"children,omitempty"`
 }
 
@@ -260,11 +274,14 @@ func (x *Category) GetChildren() []*Category {
 	return nil
 }
 
+//
+// Деревья категорий товаров
 type CategoriesTrees struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// список категорий товаров
 	Categories []*Category `protobuf:"bytes,1,rep,name=categories,proto3" json:"categories,omitempty"`
 }
 
@@ -307,16 +324,23 @@ func (x *CategoriesTrees) GetCategories() []*Category {
 	return nil
 }
 
+//
+// Поисковый запрос
 type SearchRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ShopID     int32                  `protobuf:"varint,1,opt,name=shopID,proto3" json:"shopID,omitempty"`
-	Filters    *SearchRequest_Filters `protobuf:"bytes,2,opt,name=filters,proto3" json:"filters,omitempty"`
-	SearchTerm string                 `protobuf:"bytes,3,opt,name=searchTerm,proto3" json:"searchTerm,omitempty"`
-	WithParams bool                   `protobuf:"varint,4,opt,name=withParams,proto3" json:"withParams,omitempty"`
-	Meta       *ScrollDescriptor      `protobuf:"bytes,5,opt,name=meta,proto3" json:"meta,omitempty"`
+	// id магазина
+	ShopID int32 `protobuf:"varint,1,opt,name=shopID,proto3" json:"shopID,omitempty"`
+	// фильтры поиска
+	Filters *SearchRequest_Filters `protobuf:"bytes,2,opt,name=filters,proto3" json:"filters,omitempty"`
+	// поисковый запрос
+	SearchTerm string `protobuf:"bytes,3,opt,name=searchTerm,proto3" json:"searchTerm,omitempty"`
+	// показывать ли атрибуты товаров
+	WithParams bool `protobuf:"varint,4,opt,name=withParams,proto3" json:"withParams,omitempty"`
+	// опции постраничной выдачи
+	Meta *ScrollDescriptor `protobuf:"bytes,5,opt,name=meta,proto3" json:"meta,omitempty"`
 }
 
 func (x *SearchRequest) Reset() {
@@ -386,12 +410,16 @@ func (x *SearchRequest) GetMeta() *ScrollDescriptor {
 	return nil
 }
 
+//
+// Опции постраничной выдачи
 type ScrollDescriptor struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Limit  int32 `protobuf:"varint,1,opt,name=limit,proto3" json:"limit,omitempty"`
+	// максимальное количество элементов в выдаче
+	Limit int32 `protobuf:"varint,1,opt,name=limit,proto3" json:"limit,omitempty"`
+	// смещение (страница) выдачи
 	Offset int32 `protobuf:"varint,2,opt,name=offset,proto3" json:"offset,omitempty"`
 }
 
@@ -441,24 +469,37 @@ func (x *ScrollDescriptor) GetOffset() int32 {
 	return 0
 }
 
+//
+// Товар
 type Product struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ID          int32            `protobuf:"varint,1,opt,name=ID,proto3" json:"ID,omitempty"`
-	ItemID      string           `protobuf:"bytes,2,opt,name=itemID,proto3" json:"itemID,omitempty"`
-	ShopID      int32            `protobuf:"varint,3,opt,name=shopID,proto3" json:"shopID,omitempty"`
-	Name        string           `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
-	Available   bool             `protobuf:"varint,5,opt,name=available,proto3" json:"available,omitempty"`
-	Type        string           `protobuf:"bytes,6,opt,name=type,proto3" json:"type,omitempty"`
-	Url         string           `protobuf:"bytes,7,opt,name=url,proto3" json:"url,omitempty"`
-	Price       int32            `protobuf:"varint,8,opt,name=price,proto3" json:"price,omitempty"`
-	Vendor      string           `protobuf:"bytes,9,opt,name=vendor,proto3" json:"vendor,omitempty"`
-	Description string           `protobuf:"bytes,10,opt,name=description,proto3" json:"description,omitempty"`
-	CurrencyID  string           `protobuf:"bytes,11,opt,name=currencyID,proto3" json:"currencyID,omitempty"`
-	CategoryID  string           `protobuf:"bytes,12,opt,name=categoryID,proto3" json:"categoryID,omitempty"`
-	Params      []*Product_Param `protobuf:"bytes,13,rep,name=params,proto3" json:"params,omitempty"`
+	// сквозной id товара
+	ID int32 `protobuf:"varint,1,opt,name=ID,proto3" json:"ID,omitempty"`
+	// id товара в магазине
+	ItemID string `protobuf:"bytes,2,opt,name=itemID,proto3" json:"itemID,omitempty"`
+	// id магазина
+	ShopID int32 `protobuf:"varint,3,opt,name=shopID,proto3" json:"shopID,omitempty"`
+	// наименование товара
+	Name string `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	// доступен ли товар
+	Available bool `protobuf:"varint,5,opt,name=available,proto3" json:"available,omitempty"`
+	// тип поставки
+	Type string `protobuf:"bytes,6,opt,name=type,proto3" json:"type,omitempty"`
+	// ссылка на товар в магазине
+	Url string `protobuf:"bytes,7,opt,name=url,proto3" json:"url,omitempty"`
+	// цена
+	Price int32 `protobuf:"varint,8,opt,name=price,proto3" json:"price,omitempty"`
+	// поставщик
+	Vendor string `protobuf:"bytes,9,opt,name=vendor,proto3" json:"vendor,omitempty"`
+	// описание товара
+	Description string `protobuf:"bytes,10,opt,name=description,proto3" json:"description,omitempty"`
+	// id валюты
+	CurrencyID string `protobuf:"bytes,11,opt,name=currencyID,proto3" json:"currencyID,omitempty"`
+	// атрибуты товара
+	Params []*Product_Param `protobuf:"bytes,13,rep,name=params,proto3" json:"params,omitempty"`
 }
 
 func (x *Product) Reset() {
@@ -570,13 +611,6 @@ func (x *Product) GetCurrencyID() string {
 	return ""
 }
 
-func (x *Product) GetCategoryID() string {
-	if x != nil {
-		return x.CategoryID
-	}
-	return ""
-}
-
 func (x *Product) GetParams() []*Product_Param {
 	if x != nil {
 		return x.Params
@@ -584,13 +618,17 @@ func (x *Product) GetParams() []*Product_Param {
 	return nil
 }
 
+//
+// Cписок товаров
 type Products struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Products []*Product        `protobuf:"bytes,1,rep,name=products,proto3" json:"products,omitempty"`
-	Meta     *ScrollDescriptor `protobuf:"bytes,2,opt,name=meta,proto3" json:"meta,omitempty"`
+	// список товаров
+	Products []*Product `protobuf:"bytes,1,rep,name=products,proto3" json:"products,omitempty"`
+	// опции постраничной выдачи
+	Meta *ScrollDescriptor `protobuf:"bytes,2,opt,name=meta,proto3" json:"meta,omitempty"`
 }
 
 func (x *Products) Reset() {
@@ -639,13 +677,16 @@ func (x *Products) GetMeta() *ScrollDescriptor {
 	return nil
 }
 
+// Фильтры поиска
 type SearchRequest_Filters struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Available     *wrapperspb.BoolValue `protobuf:"bytes,1,opt,name=available,proto3" json:"available,omitempty"`
-	CategoriesIDs []int32               `protobuf:"varint,2,rep,packed,name=categoriesIDs,proto3" json:"categoriesIDs,omitempty"`
+	// доступен ли товар
+	Available *wrapperspb.BoolValue `protobuf:"bytes,1,opt,name=available,proto3" json:"available,omitempty"`
+	// id категорий товаров
+	CategoriesIDs []int32 `protobuf:"varint,2,rep,packed,name=categoriesIDs,proto3" json:"categoriesIDs,omitempty"`
 }
 
 func (x *SearchRequest_Filters) Reset() {
@@ -694,13 +735,17 @@ func (x *SearchRequest_Filters) GetCategoriesIDs() []int32 {
 	return nil
 }
 
+// Атрибут товара
 type Product_Param struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Name  string           `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Type  string           `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
+	/// имя атрибута
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	/// тип атрибута
+	Type string `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
+	/// значение атрибута
 	Value *structpb.Struct `protobuf:"bytes,3,opt,name=value,proto3" json:"value,omitempty"`
 }
 
@@ -817,7 +862,7 @@ var file_pim_service_pim_service_proto_rawDesc = []byte{
 	0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x6f, 0x72, 0x12, 0x14, 0x0a, 0x05, 0x6c, 0x69, 0x6d, 0x69,
 	0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05, 0x6c, 0x69, 0x6d, 0x69, 0x74, 0x12, 0x16,
 	0x0a, 0x06, 0x6f, 0x66, 0x66, 0x73, 0x65, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x06,
-	0x6f, 0x66, 0x66, 0x73, 0x65, 0x74, 0x22, 0xc5, 0x03, 0x0a, 0x07, 0x50, 0x72, 0x6f, 0x64, 0x75,
+	0x6f, 0x66, 0x66, 0x73, 0x65, 0x74, 0x22, 0xa5, 0x03, 0x0a, 0x07, 0x50, 0x72, 0x6f, 0x64, 0x75,
 	0x63, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x49, 0x44, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x02,
 	0x49, 0x44, 0x12, 0x16, 0x0a, 0x06, 0x69, 0x74, 0x65, 0x6d, 0x49, 0x44, 0x18, 0x02, 0x20, 0x01,
 	0x28, 0x09, 0x52, 0x06, 0x69, 0x74, 0x65, 0x6d, 0x49, 0x44, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x68,
@@ -834,9 +879,7 @@ var file_pim_service_pim_service_proto_rawDesc = []byte{
 	0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x64,
 	0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x1e, 0x0a, 0x0a, 0x63, 0x75,
 	0x72, 0x72, 0x65, 0x6e, 0x63, 0x79, 0x49, 0x44, 0x18, 0x0b, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a,
-	0x63, 0x75, 0x72, 0x72, 0x65, 0x6e, 0x63, 0x79, 0x49, 0x44, 0x12, 0x1e, 0x0a, 0x0a, 0x63, 0x61,
-	0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x49, 0x44, 0x18, 0x0c, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a,
-	0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x49, 0x44, 0x12, 0x32, 0x0a, 0x06, 0x70, 0x61,
+	0x63, 0x75, 0x72, 0x72, 0x65, 0x6e, 0x63, 0x79, 0x49, 0x44, 0x12, 0x32, 0x0a, 0x06, 0x70, 0x61,
 	0x72, 0x61, 0x6d, 0x73, 0x18, 0x0d, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x70, 0x69, 0x6d,
 	0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x50, 0x72, 0x6f, 0x64, 0x75, 0x63, 0x74,
 	0x2e, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x52, 0x06, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x1a, 0x5e,

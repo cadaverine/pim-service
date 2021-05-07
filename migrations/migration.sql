@@ -1,5 +1,8 @@
+-- создаем базу, явно указывая кодировку (для корректной работы со строками на русском языке)
 create database pim_db template template0 encoding UTF8 LC_COLLATE "ru_RU.UTF-8" LC_CTYPE "ru_RU.UTF-8";
 
+
+-- триггерная функция, для обновления значений полей updated_at в таблицах
 create or replace function trigger_set_timestamp()
 returns trigger as $$
 begin
@@ -8,10 +11,11 @@ begin
 end;
 $$ language plpgsql;
 
+
 -- справочники
 create schema if not exists catalogs;
 
--- берем с api.hh.ru
+-- языки
 create table if not exists catalogs.languages(
     code varchar primary key,
     name varchar not null default '',
@@ -25,6 +29,7 @@ for each row execute procedure trigger_set_timestamp();
 insert into catalogs.languages(code, name)
 values ('rus', 'Русский'), ('eng', 'Английский');
 
+-- валюты
 create table if not exists catalogs.currencies(
     code varchar not null default '',
     name varchar not null default '',
@@ -40,9 +45,11 @@ for each row execute procedure trigger_set_timestamp();
 insert into catalogs.currencies(code, name, rate)
 values ('RUB', 'Российский рубль', 1);
 
--- товары
+
+-- информация о товарах
 create schema if not exists product_information;
 
+-- магазины
 create table if not exists product_information.shops(
     id bigserial primary key,
     name varchar not null default '',
@@ -84,7 +91,7 @@ create table if not exists product_information.categories_translations(
 create trigger set_timestamp before update on product_information.categories_translations
 for each row execute procedure trigger_set_timestamp();
 
--- допустимые типы аттрибутов
+-- допустимые типы атрибутов
 create type product_information.attributes_type as enum(
     'string',
     'integer',
@@ -123,7 +130,8 @@ create table if not exists product_information.products_categories(
     unique (product_id, category_id)
 );
 
--- аттрибуты конкретных товаров
+-- атрибуты конкретных товаров, для хранения значения ипользуем тип jsonb
+-- (могут хранится любые данные, которые мы представим как json)
 create table if not exists product_information.products_attributes(
     id bigserial primary key,
     product_id bigint references product_information.products(id) on delete cascade,
@@ -138,7 +146,7 @@ create table if not exists product_information.products_attributes(
 create trigger set_timestamp after update on product_information.products_attributes
 for each row execute procedure trigger_set_timestamp();
 
--- имена аттрибутов на разных языках
+-- имена атрибутов на разных языках
 create table if not exists product_information.products_attributes_translations(
     attribute_id int references product_information.products_attributes(id) on delete cascade,
     lang_code varchar references catalogs.languages(code) on delete cascade,
@@ -150,7 +158,8 @@ create table if not exists product_information.products_attributes_translations(
 create trigger set_timestamp after update on product_information.products_attributes_translations
 for each row execute procedure trigger_set_timestamp();
 
--- используем для нечеткого поиска по продуктам
+
+-- используем расширение pg_trgm для нечеткого поиска по товарам
 create extension if not exists pg_trgm;
 
 create index products_trgm_idx

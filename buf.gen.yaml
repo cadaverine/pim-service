@@ -17,3 +17,9 @@ plugins:
     out: swagger-ui/dist
     opt:
       - allow_repeated_fields_in_body=true
+  - name: doc
+    out: docs
+    opt:
+      - markdown,docs.md
+
+
